@@ -22,6 +22,22 @@ class AuthController{
             next(err)
         }
     }
+
+    login = async(req,res,next)=>{
+        try{
+            const {email,password} = req.body
+
+            const result = await this.authService.loginUser(email,password)
+
+            res.status(200).json({
+                status:"success",
+                message : "Logged in Succesfully",
+                result
+            })
+        }catch(err){
+            next(err)
+        }
+    }
 }
 
 module.exports={AuthController}
