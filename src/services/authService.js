@@ -1,6 +1,9 @@
-const {prisma} = require('../config/prisma.js')
-const bcrypt = require('bcrypt')
-const {generateAccessToken,generateRefreshToken} = require('../utils/jwt')
+const {prisma} = require('../config/prisma.js');
+const bcrypt = require('bcrypt');
+const crypto = require('crypto');
+const {generateAccessToken,generateRefreshToken, verifyRefreshToken} = require('../utils/jwt');
+const { ref } = require('process');
+const { access } = require('fs');
 
 class AuthService{
     registerUser = async (email,password)=>{
@@ -63,6 +66,17 @@ loginUser = async (email,password)=>{
     const accessToken =  generateAccessToken(payload);
     const refreshToken = generateRefreshToken({userId:user.id})
 
+    const refreshTokenHash = crypto.createHash('sha256').update(refreshToken).digest('hex')
+    const expiresAt = new Date(Date.now() + (7 * 24 * 60 * 60 * 1000))
+
+    await prisma.RefreshToken.create({
+        data:{
+            userId : user.id,
+            tokenHash : refreshTokenHash,
+            expiresAt
+        }
+    })
+
     return {
         user : {
             id: user.id,
@@ -76,6 +90,84 @@ loginUser = async (email,password)=>{
 
 
 }
+
+    refresh = async(refreshToken)=>{
+        if(!refreshToken){
+            const error = new Error('Refresh Token Is Required');
+            error.statusCode = 400;
+            throw error
+        }
+
+        const decoded = verifyRefreshToken(refreshToken)
+
+        const refreshHashToken = crypto.createHash('sha256').update(refreshToken).digest('hex')
+        const stored = await prisma.RefreshToken.findUnique({
+            where:{
+                tokenHash : refreshHashToken,
+            }
+        })
+
+        if(!stored || stored.revokedAt){
+            const error = new Error("Refresh Token is Invalid or Revoked")
+            error.statusCode = 401;
+            throw error
+        };
+
+        if (stored.expiresAt < new Date()) {
+            const error = new Error("Refresh token expired");
+            error.statusCode = 401;
+            throw error;
+        }    
+        
+        const user = await prisma.user.findUnique({
+             where : {id : decoded.userId}
+        })
+
+        if(!user){
+            const error = new Error("No user found")
+            error.statusCode = 401;
+            throw error;
+        }
+
+        const newAccessToken = generateAccessToken({
+            userId:user.id,
+            email:user.email
+        })
+
+        return {
+        accessToken : newAccessToken
+    }   
+    
+    }
+
+    logout = async(refreshToken)=>{
+        if(!refreshToken){
+            const error = new Error("Refresh token is required");
+            error.statusCode = 401;
+            throw error
+        }
+
+        const refreshTokenHash = crypto.createHash('sha256').update(refreshToken).digest('hex');
+
+        const stored = await prisma.refreshToken.findUnique({
+            where : {tokenHash:refreshTokenHash}
+        })
+
+        if(!stored){
+            return{
+                message : "Logged Out"
+            }
+        }
+
+        await prisma.refreshToken.update({
+            where:{tokenHash:refreshTokenHash},
+            data:{revokedAt:new Date()},
+        })
+
+        return { message : "Logged Out"}
+    }
+
+
 
 }
 

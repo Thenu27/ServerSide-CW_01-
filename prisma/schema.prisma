@@ -16,6 +16,7 @@ model User {
 
   profile  Profile?
   sessions Session[]
+  refreshTokens RefreshToken[]
 }
 
 model Profile {
@@ -41,4 +42,18 @@ model Session {
 
   @@index([expire])
   @@index([userId])
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  userId    String
+  tokenHash String   @unique
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
 }
