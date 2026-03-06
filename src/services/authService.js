@@ -7,11 +7,11 @@ const { access } = require('fs');
 
 class AuthService{
     registerUser = async (email,password)=>{
-        const exisiting = await prisma.user.findUnique({
+        const existing = await prisma.user.findUnique({
         where : {email}
         }) 
 
-        if(exisiting){
+        if(existing){
                 const error = new Error("Email already registered");
                 error.statusCode = 409 //Conflict
                 throw error
@@ -32,6 +32,9 @@ class AuthService{
             createdAt: true,
         },
     })
+
+    const verificationToken = await this.createEmailVerificationToken(user.id);
+    console.log("Email verification token:", verificationToken);
 
     return user
 
@@ -69,7 +72,7 @@ loginUser = async (email,password)=>{
     const refreshTokenHash = crypto.createHash('sha256').update(refreshToken).digest('hex')
     const expiresAt = new Date(Date.now() + (7 * 24 * 60 * 60 * 1000))
 
-    await prisma.RefreshToken.create({
+    await prisma.refreshToken.create({
         data:{
             userId : user.id,
             tokenHash : refreshTokenHash,
@@ -140,6 +143,8 @@ loginUser = async (email,password)=>{
     
     }
 
+
+
     logout = async(refreshToken)=>{
         if(!refreshToken){
             const error = new Error("Refresh token is required");
@@ -167,7 +172,65 @@ loginUser = async (email,password)=>{
         return { message : "Logged Out"}
     }
 
+    createEmailVerificationToken = async(userId)=>{
+        const rawToken = crypto.randomBytes(32).toString('hex');
+        const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
 
+        const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+        await prisma.emailVerificationToken.deleteMany({
+            where:{userId}
+        })
+
+        await prisma.emailVerificationToken.create({
+            data:{
+                userId,
+                tokenHash,
+                expiresAt
+            }
+        })
+
+        return rawToken
+    }
+
+
+    verifyEmail = async(token)=>{
+        if(!token){
+            const error =new Error("Verification Token Required!");
+            error.statusCode = 400;
+            throw error
+        }
+
+        const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+        const storedToken = await prisma.emailVerificationToken.findUnique({
+            where:{tokenHash}
+        })
+
+        if(!storedToken){
+            const error = new Error("Invalid Verififcation Token!");
+            error.statusCode=400;
+            throw error
+        }
+
+        if(storedToken.usedAt){
+            const error = new Error("Verififcation Token Already Used!");
+            error.statusCode=400;
+            throw error            
+        }
+
+        if(storedToken.expiresAt <Data.now()){
+            const error = new Error("Verification Token Expired!");
+            error.statusCode = 400;
+            throw error
+        }   
+
+        await prisma.emailVerificationToken.update({
+            where:{tokenHash},
+            data: {usedAt : new Date}
+        })
+
+        return {message : "Email verified succesfully!"};
+    }
 
 }
 

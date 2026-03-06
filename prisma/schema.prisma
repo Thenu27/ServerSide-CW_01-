@@ -17,6 +17,7 @@ model User {
   profile  Profile?
   sessions Session[]
   refreshTokens RefreshToken[]
+  emailVerificationToken EmailVerificationToken?
 }
 
 model Profile {
@@ -55,5 +56,18 @@ model RefreshToken {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+  @@index([expiresAt])
+}
+
+
+model EmailVerificationToken {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  tokenHash String   @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@index([expiresAt])
 }

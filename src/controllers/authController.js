@@ -1,3 +1,4 @@
+const { token } = require("morgan");
 const { AuthService } = require("../services/authService");
 
 class AuthController{
@@ -69,6 +70,20 @@ class AuthController{
                 message: result.message
             })
 
+        }catch(err){
+            next(err)
+        }
+    }
+
+    verifyEmail =async(req,res,next)=>{
+        try{
+            const {token} = req.body;
+            const result = await this.authService.verifyEmail(token)
+
+            return res.status(200).json({
+                status :'success',
+                message : result.message
+            })
         }catch(err){
             next(err)
         }
