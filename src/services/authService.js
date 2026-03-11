@@ -104,7 +104,7 @@ loginUser = async (email,password)=>{
         const decoded = verifyRefreshToken(refreshToken)
 
         const refreshHashToken = crypto.createHash('sha256').update(refreshToken).digest('hex')
-        const stored = await prisma.RefreshToken.findUnique({
+        const stored = await prisma.refreshToken.findUnique({
             where:{
                 tokenHash : refreshHashToken,
             }
@@ -177,7 +177,8 @@ loginUser = async (email,password)=>{
         const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
 
         const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
-
+        console.log("prisma =", prisma);
+console.log("emailVerificationToken model =", prisma.emailVerificationToken);
         await prisma.emailVerificationToken.deleteMany({
             where:{userId}
         })
@@ -200,7 +201,7 @@ loginUser = async (email,password)=>{
             error.statusCode = 400;
             throw error
         }
-
+        console.log("Verfiy Email:",token)
         const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
         const storedToken = await prisma.emailVerificationToken.findUnique({
             where:{tokenHash}
@@ -218,7 +219,7 @@ loginUser = async (email,password)=>{
             throw error            
         }
 
-        if(storedToken.expiresAt <Data.now()){
+        if(storedToken.expiresAt <Date.now()){
             const error = new Error("Verification Token Expired!");
             error.statusCode = 400;
             throw error
