@@ -230,6 +230,11 @@ console.log("emailVerificationToken model =", prisma.emailVerificationToken);
             data: {usedAt : new Date}
         })
 
+        await prisma.user.update({
+            where:{id:storedToken.userId},
+            data:{isVerified:true}
+        })
+
         return {message : "Email verified succesfully!"};
     }
 

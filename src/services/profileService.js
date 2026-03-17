@@ -39,6 +39,31 @@ class ProfileService{
 
         return profile
     }
+
+    updateProfile = async(userId, fullName, bio, linkedIn, imageUrl)=>{
+        const existingProfile = await prisma.profile.findUnique({
+            where:{userId}
+        })
+
+        if(!existingProfile){
+            const error = new Error('Profile doesnt exist!');
+            error.statusCode = 404;
+            throw error
+        }
+
+        const updatedProfile = await prisma.profile.update({
+            where:{userId},
+            data:{
+                fullName,
+                 bio,
+                 linkedIn,
+                 imageUrl
+            }
+        })
+
+        return updatedProfile
+
+    }
 }
 
 module.exports={ProfileService}

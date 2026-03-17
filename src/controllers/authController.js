@@ -8,6 +8,7 @@ class AuthController{
 
     register = async (req,res,next)=>{
         try{
+            console.log('hit')
             const {email,password} = req.body;
 
             const user = await this.authService.registerUser(email,password);
