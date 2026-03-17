@@ -29,8 +29,9 @@ model Profile {
   imageUrl  String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
+  degrees Degree[]
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  employmentHistory EmploymentHistory[]
 }
 
 model Session {
@@ -70,4 +71,32 @@ model EmailVerificationToken {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([expiresAt])
+}
+
+model Degree {
+  id          String   @id @default(cuid())
+  profileId   String
+  degreeName  String
+  institution String
+  year        Int
+  createdAt   DateTime @default(now())
+
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId])
+}
+
+model EmploymentHistory {
+  id          String   @id @default(cuid())
+  profileId   String
+  companyName String
+  jobTitle    String
+  startDate   DateTime
+  endDate     DateTime?
+  description String?
+  createdAt   DateTime @default(now())
+
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId])
 }

@@ -46,6 +46,26 @@ class ProfileController{
 
     }
 
+    updateProfile = async(req,res,next)=>{
+        try{
+            const {fullName, bio, linkedIn, imageUrl} = req.body
+            const userId = req.user.userId
+
+            const updatedProfile = await this.profileService.updateProfile(
+               userId,fullName,bio,linkedIn,imageUrl
+            )
+
+            res.status(200).json({
+                status:'success',
+                message: "Profile updated successfully",
+                profile: updatedProfile,
+            })
+        }catch(err){
+            next(err)
+        }
+
+    }
+
 }
 
 module.exports={ProfileController}
