@@ -32,6 +32,7 @@ model Profile {
   degrees Degree[]
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   employmentHistory EmploymentHistory[]
+  certifications Certification[]
 }
 
 model Session {
@@ -95,6 +96,19 @@ model EmploymentHistory {
   endDate     DateTime?
   description String?
   createdAt   DateTime @default(now())
+
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId])
+}
+
+model Certification {
+  id           String   @id @default(cuid())
+  profileId    String
+  name         String
+  issuer       String
+  year         Int
+  createdAt    DateTime @default(now())
 
   profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 

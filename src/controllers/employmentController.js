@@ -24,6 +24,26 @@ class EmploymentController{
             next(err)
         }
     }
+
+
+    getEmployment = async(req,res,next)=>{
+        try{
+            const userId = req.user.userId;
+            const employment = await this.employmentService.getEmployment(userId);
+
+            res.status.json({
+                status:"Success",
+                employment
+            })
+        }catch(err){
+            next(err)
+        }
+
+
+    }
+
+
+
 }
 
 module.exports = {EmploymentController}

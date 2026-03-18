@@ -6,6 +6,7 @@ const {ErrorMiddleware} = require('./middleware/errorMiddleware.js');
 const {env} = require('./config/env.js');
 const { degreeRouter } = require('./routes/degreeRoute.js');
 const { employmentRouter } = require('./routes/employmentRoute.js');
+const { certificationRouter } = require('./routes/certificationRoute.js');
 
 const app = express()
 app.use(express.json());
@@ -14,7 +15,8 @@ app.use('/user',userRouter);
 app.use('/auth',authRouter);
 app.use('/profile',profileRouter);
 app.use('/degree',degreeRouter);
-app.use('/employment',employmentRouter)
+app.use('/employment',employmentRouter);
+app.use('/certification',certificationRouter)
 
 app.use(ErrorMiddleware.handle);
 

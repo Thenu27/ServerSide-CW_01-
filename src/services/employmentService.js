@@ -26,6 +26,28 @@ class EmploymentService{
     return employment
 
     }
+
+    getEmployment = async(userId)=>{
+
+      const profile = await prisma.profile.findUnique({
+        where:{userId}
+      })
+
+      if(!profile){
+          const error = new Error("Profile not found!");
+          error.statusCode = 404;
+          throw error
+      }
+
+      const employment = await prisma.employmentHistory.findMany({
+        where:{profileId:profile.id},
+        orderBy : {createdAt : 'desc'}
+
+      })
+
+      return employment
+
+    }
 }
 
 module.exports={EmploymentService}
