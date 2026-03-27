@@ -18,6 +18,10 @@ model User {
   sessions Session[]
   refreshTokens RefreshToken[]
   emailVerificationToken EmailVerificationToken?
+  bids Bid[]
+  featured FeaturedAlumnus[]
+  eventParticipations AlumniEventParticipation[]
+  role String @default("USER")
 }
 
 model Profile {
@@ -33,6 +37,8 @@ model Profile {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   employmentHistory EmploymentHistory[]
   certifications Certification[]
+  licences Licence[]
+  courses Course[]
 }
 
 model Session {
@@ -113,4 +119,68 @@ model Certification {
   profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
   @@index([profileId])
+}
+
+model Licence {
+  id        String   @id @default(cuid())
+  profileId String
+  name      String
+  issuer    String
+  year      Int
+  createdAt DateTime @default(now())
+
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId])
+}
+
+model Course {
+  id        String   @id @default(cuid())
+  profileId String
+  name      String
+  provider  String
+  year      Int
+  createdAt DateTime @default(now())
+
+  profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId])
+}
+
+model Bid {
+  id        String   @id @default(cuid())
+  userId    String
+  amount    Float
+  bidDate   DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, bidDate])
+  @@index([bidDate])
+}
+
+model FeaturedAlumnus {
+  id        String   @id @default(cuid())
+  userId    String
+  date      DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([date])
+}
+
+model AlumniEventParticipation {
+  id        String   @id @default(cuid())
+  userId    String
+  eventName String
+  eventDate DateTime
+  bonusUsed Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, eventDate])
 }

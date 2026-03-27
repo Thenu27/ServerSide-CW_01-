@@ -17,21 +17,21 @@ class AuthService{
                 throw error
             }
 
-            const passwordHash = await bcrypt.hash(password,12);
+        const passwordHash = await bcrypt.hash(password,12);
 
-    const user = await prisma.user.create({
-        data: {
-            email,
-            passwordHash,
-            isVerified: false,
-        },
-        select: {
-            id: true,
-            email: true,
-            isVerified: true,
-            createdAt: true,
-        },
-    })
+        const user = await prisma.user.create({
+            data: {
+                email,
+                passwordHash,
+                isVerified: false,
+            },
+            select: {
+                id: true,
+                email: true,
+                isVerified: true,
+                createdAt: true,
+            },
+        })
 
     const verificationToken = await this.createEmailVerificationToken(user.id);
     console.log("Email verification token:", verificationToken);
@@ -64,7 +64,7 @@ loginUser = async (email,password)=>{
         throw error
     }
 
-    const payload = {userId:user.id, email:user.email}
+    const payload = {userId:user.id, email:user.email, role:user.role};
 
     const accessToken =  generateAccessToken(payload);
     const refreshToken = generateRefreshToken({userId:user.id})
