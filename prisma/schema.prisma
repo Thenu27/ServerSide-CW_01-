@@ -184,3 +184,27 @@ model AlumniEventParticipation {
 
   @@index([userId, eventDate])
 }
+
+model ApiClient {
+  id        String   @id @default(cuid())
+  name      String
+  apiKey    String   @unique
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  logs ApiUsageLog[]
+}
+
+model ApiUsageLog {
+  id         String    @id @default(cuid())
+  clientId   String
+  endpoint   String
+  method     String
+  accessedAt DateTime  @default(now())
+  statusCode Int?
+
+  client ApiClient @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@index([clientId])
+  @@index([accessedAt])
+}
