@@ -10,6 +10,7 @@ const { certificationRouter } = require('./routes/certificationRoute.js');
 const { liscenceRouter } = require('./routes/liscenceRoute.js');
 const { courseRouter } = require('./routes/courseRoute.js');
 const { bidRouter } = require('./routes/bidRoute.js');
+const {apiRouter} = require("./routes/apiRoute.js");
 const swaggerUi = require('swagger-ui-express')
 const {swaggerSpec} = require('./config/swagger.js')
 
@@ -17,6 +18,7 @@ const app = express()
 app.use(express.json());
 
 require('./scheduler/winnerScheduler.js')
+
 app.use('/api-docs',swaggerUi.serve,swaggerUi.setup(swaggerSpec))
 app.use('/user',userRouter);
 app.use('/auth',authRouter);
@@ -27,6 +29,7 @@ app.use('/certification',certificationRouter);
 app.use('/liscence',liscenceRouter);
 app.use('/course',courseRouter)
 app.use('/bid',bidRouter)
+app.use('/api',apiRouter)
 
 app.use(ErrorMiddleware.handle);
 

@@ -208,3 +208,12 @@ model ApiUsageLog {
   @@index([clientId])
   @@index([accessedAt])
 }
+
+model UsageLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  endpoint  String?
+  method    String?
+  createdAt DateTime @default(now())
+}

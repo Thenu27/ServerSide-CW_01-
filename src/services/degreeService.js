@@ -1,6 +1,12 @@
 const { prisma } = require("../config/prisma")
+const { UsageService } = require("./usageService")
 
 class DegreeService{
+
+    constructor(){
+        this.usageService = new UsageService()
+    }
+
     addDegree = async(userId, degreeName, institution, year)=>{
         const profile = await prisma.profile.findUnique({
             where:{userId}
@@ -21,7 +27,17 @@ class DegreeService{
             }
         })
 
+        if(userId){
+            await this.usageService.usage({
+            userId : userId,
+            action:"ADD_DEGREE",
+            endpoint : "/degree",
+            method : "POST"
+        })
+    }  
+
         return degree
+        
     }
 
     getDegree = async(userId)=>{
@@ -39,6 +55,17 @@ class DegreeService{
             where:{profileId:profile.id},
             orderBy : {createdAt:'desc'}            
         });
+
+
+        if(userId){
+            await this.usageService.usage({
+                userId : userId,
+                action:"GET_DEGREE",
+                endpoint : "/degree",
+                method : "GET"
+            })
+        }  
+
 
         return degree;
 

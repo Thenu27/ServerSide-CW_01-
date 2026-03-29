@@ -1,7 +1,12 @@
 const { prisma } = require("../config/prisma");
 const {normalizeDate} = require('../utils/date');
+const { UsageService } = require("./usageService");
 
 class BidService{
+
+    constructor(){
+        this.usageService = new UsageService();
+    }
 
     placeBid = async(userId,amount)=>{
         if(amount<=0 || !amount){
@@ -11,10 +16,6 @@ class BidService{
         }
 
         const bidDate = normalizeDate();
-
-        // const now = new Date();
-        // const month = now.getMonth() +1;
-        // const year = now.getFullYear();
 
         const existingBid = await prisma.bid.findUnique({
         where: {
@@ -53,6 +54,15 @@ class BidService{
         }
         })
 
+        if(userId){
+            await this.usageService.usage({
+                userId : user.id,
+                action:"PLACE_BID",
+                endpoint : "/bid",
+                method : "POST"
+            })
+        }
+
             return updateBid
 
     }
@@ -78,10 +88,19 @@ class BidService{
         throw error;
     }
 
+    if(userId){
+        await this.usageService.usage({
+            userId : user.id,
+            action:"GET_BID",
+            endpoint : "/bid",
+            method : "GET"
+        })
+    }
     return bid;
     };
 
-    selectWinner = async () => {
+
+    selectWinner = async (userId) => {
             const date = normalizeDate();
 
             // 1) Check if winner already exists for today
@@ -191,10 +210,19 @@ class BidService{
                 });
             }
 
+            if(userId){
+                await this.usageService.usage({
+                    userId : userId,
+                    action:"SELECT_WINNER",
+                    endpoint : "/bid/winner",
+                    method : "POST"
+                })
+            }
+
             return winner;
     };
 
-    getCurrentWinner = async () => {
+    getCurrentWinner = async (userId) => {
         const date = normalizeDate();
 
         const winner = await prisma.featuredAlumnus.findUnique({
@@ -214,9 +242,60 @@ class BidService{
             throw error;
         }
 
+        if(userId){
+            await this.usageService.usage({
+               userId : userId,
+               action:"GET_WINNER",
+               endpoint : "/bid/winner",
+               method : "GET"
+           })
+        }    
+
         return winner;
         };
 
+
+        getMyResult = async(userId)=>{
+            const date = normalizeDate()
+
+            const winner = await prisma.featuredAlumnus.findUnique({
+                where : {date}
+            })
+
+            if(!winner){
+                return{
+                    status : "PENDING",
+                    messages : "Winner has not been selected yet."
+                }
+            }
+
+            if(userId){
+                await this.usageService.usage({
+                userId : userId,
+                action:"GET_MY_RESULT",
+                endpoint : "/bid/result",
+                method : "GET"
+             })
+          }  
+
+
+            if(winner.userId === userId){
+                return{
+                    status : "WIN",
+                    messages : "Congratulations! You are today's winner."
+                }
+            }else{
+                return{
+                   status : "LOSE",
+                   messages : "Sorry, you were not selected today."
+                }               
+            }
+
+
+
+            
+
+        }
 
 
 }

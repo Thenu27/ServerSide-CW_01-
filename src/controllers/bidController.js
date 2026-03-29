@@ -42,7 +42,9 @@ class BidController{
 
     selectWinner = async(req,res,next)=>{
         try{
-            const winner = await this.bidService.selectWinner();
+
+            const userId = req.user.userId
+            const winner = await this.bidService.selectWinner(userId);
 
             res.status(200).json({
                 status:"Success",
@@ -55,11 +57,25 @@ class BidController{
 
     getWinner = async(req,res,next)=>{
         try{
-            const winner = await this.bidService.getCurrentWinner();
+            const userId = req.user.userId
+            const winner = await this.bidService.getCurrentWinner(userId);
 
             res.status(200).json({
                 status : "Success",
                 winner
+            })
+        }catch(err){
+            next(err)
+        }
+    }
+
+    getMyResult = async(req,res,next)=>{
+        try{
+            const userId = req.userId;
+            const result = this.bidService.getMyResult(userId);
+            
+            res.status(200).json({
+                result
             })
         }catch(err){
             next(err)

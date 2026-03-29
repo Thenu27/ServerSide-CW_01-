@@ -22,6 +22,15 @@ class ProfileService{
             }
         })
 
+        if(userId){
+            await this.usageService.usage({
+                userId : userId,
+                action:"CREATE_PROFILE",
+                endpoint : "/profile",
+                method : "POST"
+            })
+        }         
+
         return profile
     }
 
@@ -36,6 +45,15 @@ class ProfileService{
             error.statusCode = 409;
             throw error
         }
+
+        if(userId){
+            await this.usageService.usage({
+                userId : userId,
+                action:"GET_PROFILE",
+                endpoint : "/profile",
+                method : "GET"
+            })
+        }          
 
         return profile
     }
@@ -60,6 +78,15 @@ class ProfileService{
                  imageUrl
             }
         })
+
+        if(userId){
+            await this.usageService.usage({
+                userId : userId,
+                action:"UPDATE_PROFILE",
+                endpoint : "/profile",
+                method : "GET"
+            })
+        }
 
         return updatedProfile
 

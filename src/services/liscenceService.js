@@ -1,6 +1,12 @@
 const { prisma } = require("../config/prisma");
+const { UsageService } = require("./usageService");
 
 class LiscenceService{
+
+    constructor(){
+        this.usageService = new UsageService()
+    }
+
     addLiscence = async(userId,name,issuer,year)=>{
         const profile = await prisma.profile.findUnique({
             where:{userId}
@@ -21,6 +27,16 @@ class LiscenceService{
             }
         })
 
+        if(userId){
+            await this.usageService.usage({
+                userId : userId,
+                action:"ADD_LISCENCE",
+                endpoint : "/liscence",
+                method : "POST"
+            })
+        } 
+
+
         return liscence      
       
     }
@@ -40,6 +56,16 @@ class LiscenceService{
             where:{profileId:profile.id},
             orderBy:{createdAt : 'desc'}
         })
+
+        if(userId){
+            await this.usageService.usage({
+                userId : userId,
+                action:"GET_LISCENCE",
+                endpoint : "/liscence",
+                method : "GET"
+            })
+        } 
+
 
         return liscence
     }

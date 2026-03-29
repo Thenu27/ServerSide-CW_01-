@@ -4,11 +4,33 @@ const crypto = require('crypto');
 const {generateAccessToken,generateRefreshToken, verifyRefreshToken} = require('../utils/jwt');
 const { ref } = require('process');
 const { access } = require('fs');
+const { UsageService } = require('./usageService.js');
+
+const allowedDomains = ["iit.ac.lk","westminster.ac.uk"]
 
 class AuthService{
+
+    constructor(){
+        this.usageService = new UsageService()
+    }
+    
     registerUser = async (email,password)=>{
+
+        let isValidEmail = false
+
+        if(email && email.includes("@")){
+            const domains = email.split("@")[1];
+            isValidEmail = allowedDomains.includes(domains)
+        }
+
+        if(!isValidEmail){
+            const error = new Error("Email not Valid!")
+            error.statusCode = 409
+            throw error
+        }
+
         const existing = await prisma.user.findUnique({
-        where : {email}
+            where : {email}
         }) 
 
         if(existing){
@@ -33,8 +55,19 @@ class AuthService{
             },
         })
 
+        if(user){
+            await this.usageService.usage({
+                 userId : user.id,
+                 action:"REGISTER",
+                 endpoint : "/auth/register",
+                 method : "POST"
+            })
+        }
+
     const verificationToken = await this.createEmailVerificationToken(user.id);
     console.log("Email verification token:", verificationToken);
+
+
 
     return user
 
@@ -79,6 +112,15 @@ loginUser = async (email,password)=>{
             expiresAt
         }
     })
+
+    if(user){
+        await this.usageService.usage({
+           userId : user.id,
+           action:"LOGIN",
+           endpoint : "/auth/login",
+           method : "POST"
+        })
+    }
 
     return {
         user : {
@@ -145,7 +187,7 @@ loginUser = async (email,password)=>{
 
 
 
-    logout = async(refreshToken)=>{
+    logout = async(refreshToken,userId)=>{
         if(!refreshToken){
             const error = new Error("Refresh token is required");
             error.statusCode = 401;
@@ -168,6 +210,15 @@ loginUser = async (email,password)=>{
             where:{tokenHash:refreshTokenHash},
             data:{revokedAt:new Date()},
         })
+
+        if(userId){
+            await this.usageService.usage({
+                userId : user.id,
+                action:"LOGOUT",
+                endpoint : "/auth/logout",
+                method : "POST"
+        })
+    }
 
         return { message : "Logged Out"}
     }

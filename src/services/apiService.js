@@ -1,5 +1,5 @@
-import crypto from 'crypto';
-import { prisma } from '../config/prisma';
+const crypto = require('crypto');
+const { prisma } = require('../config/prisma');
 
 class ApiService{
      generateApiKey=()=>{
@@ -7,7 +7,7 @@ class ApiService{
     }
 
     createApiKey = async(name)=>{
-        const api_key = generateApiKey();
+        const api_key = this.generateApiKey();
         const client = await prisma.apiClient.create({
             data:{
                 name,
@@ -19,4 +19,4 @@ class ApiService{
     }
 }
 
-module.exports={ApiService}
+module.exports = {ApiService} 

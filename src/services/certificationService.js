@@ -1,7 +1,14 @@
 const { prisma } = require("../config/prisma");
+const { UsageService } = require("./usageService");
 
 class CertificationService{
+
+    constructor(){
+        this.usageService = new UsageService();
+    }
+
     addCertification = async(userId, name, issuer, year)=>{
+        
         const profile = await prisma.profile.findUnique({
             where:{userId}
         })
@@ -20,6 +27,15 @@ class CertificationService{
                 year
             }
         })
+
+        if(userId){
+            await this.usageService.usage({
+              userId : userId,
+              action:"ADD_CERTIFICATION",
+              endpoint : "/certification",
+              method : "POST"
+            })
+        }          
 
         return certification
 
@@ -41,6 +57,15 @@ class CertificationService{
             where:{profileId:profile.id},
             orderBy:{createdAt:'desc'}
         })
+
+        if(userId){
+            await this.usageService.usage({
+              userId : userId,
+              action:"GET_CERTIFICATION",
+              endpoint : "/certification",
+              method : "GET"
+            })
+        } 
 
         return certification
     }

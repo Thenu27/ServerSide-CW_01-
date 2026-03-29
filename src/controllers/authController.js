@@ -28,8 +28,9 @@ class AuthController{
         try{
 
             const {email,password} = req.body
+            const userId = req.user.userId
 
-            const result = await this.authService.loginUser(email,password)
+            const result = await this.authService.loginUser(email,password,userId)
 
             res.status(200).json({
                 status:"success",

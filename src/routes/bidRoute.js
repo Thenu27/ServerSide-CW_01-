@@ -9,6 +9,8 @@ const bidController = new BidController();
 bidRouter.post("/", AuthMiddleware.requireAuth, bidController.placeBid);
 bidRouter.get("/",AuthMiddleware.requireAuth,bidController.getBid);
 bidRouter.post('/winner',AuthMiddleware.requireAuth,AdminMiddleware.requireAdmin,bidController.selectWinner);
+bidRouter.get('/winner',AuthMiddleware.requireAuth,bidController.getWinner);
+bidRouter.get('/result',AuthMiddleware.requireAuth,bidController.getMyResult);
 
 /**
  * @swagger
