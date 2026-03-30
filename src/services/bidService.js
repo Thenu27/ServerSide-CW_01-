@@ -1,71 +1,114 @@
 const { prisma } = require("../config/prisma");
 const {normalizeDate} = require('../utils/date');
+const { NotificationService } = require("./notificationService");
 const { UsageService } = require("./usageService");
+
 
 class BidService{
 
     constructor(){
         this.usageService = new UsageService();
+        this.notificationService = new NotificationService();
+
     }
 
-    placeBid = async(userId,amount)=>{
-        if(amount<=0 || !amount){
-            const error = new Error('Invalid Amount!');
+    placeBid = async (userId, amount) => {
+
+        const profile = await prisma.profile.findUnique({
+          where: { userId },
+        });
+
+        if (!profile) {
+          const error = new Error("Profile not found");
+          error.statusCode = 404;
+          throw error;
+        }
+
+
+        if (!amount || amount <= 0) {
+            const error = new Error("Invalid Amount!");
             error.statusCode = 400;
-            throw error
+            throw error;
         }
 
         const bidDate = normalizeDate();
+        let savedBid;
 
         const existingBid = await prisma.bid.findUnique({
-        where: {
-            userId_bidDate: {
-            userId,
-            bidDate
-            }
-        }
-        })
-
-        if(!existingBid){
-            const bid = await prisma.bid.create({
-                data:{
-                    userId,amount,bidDate
+            where: {
+                userId_bidDate: {
+                    userId,
+                    bidDate
                 }
-            })
-
-            return bid
-        }
-
-        if(amount <= existingBid.amount){
-            const error = new Error('New bid must be higher than previous bid');
-            error.statusCode = 400;
-            throw error
-        }
-
-        const updateBid = await prisma.bid.update({
-        where: {
-            userId_bidDate: {
-            userId,
-            bidDate
             }
-        },
-        data: {
-            amount
+        });
+
+        if (!existingBid) {
+            savedBid = await prisma.bid.create({
+                data: {
+                    userId,
+                    amount,
+                    bidDate,
+                    status: "ACTIVE"
+                }
+            });
+        } else if (existingBid.status === "CANCELLED") {
+            savedBid = await prisma.bid.update({
+                where: {
+                    userId_bidDate: { userId, bidDate }
+                },
+                data: {
+                    amount,
+                    status: "ACTIVE"
+                }
+            });
+        } else {
+            if (amount <= existingBid.amount) {
+                const error = new Error("New bid must be higher than previous bid");
+                error.statusCode = 400;
+                throw error;
+            }
+
+            savedBid = await prisma.bid.update({
+                where: {
+                    userId_bidDate: {
+                        userId,
+                        bidDate
+                    }
+                },
+                data: {
+                    amount
+                }
+            });
         }
-        })
 
-        if(userId){
-            await this.usageService.usage({
-                userId : user.id,
-                action:"PLACE_BID",
-                endpoint : "/bid",
-                method : "POST"
-            })
+        const user = await prisma.user.findUnique({
+            where: {
+                id: userId
+            }
+        });
+
+        if (!user) {
+            const error = new Error("User not found");
+            error.statusCode = 404;
+            throw error;
         }
 
-            return updateBid
+        await this.notificationService.sendBidPlacedEmail({
+            to: user.email,
+            date: bidDate,
+            amount: amount
+        });
 
-    }
+        await this.usageService.usage({
+            userId: userId,
+            action: "PLACE_BID",
+            endpoint: "/bid",
+            method: "POST"
+        });
+
+        return savedBid;
+    };
 
 
     getMyBid = async (userId) => {
@@ -73,37 +116,105 @@ class BidService{
 
     const bidDate = normalizeDate();
 
-    const bid = await prisma.bid.findUnique({
+    const bid = await prisma.bid.findFirst({
         where: {
-        userId_bidDate: {
             userId,
-            bidDate
-        },
-        },
+            bidDate,
+            status: "ACTIVE"
+        }
     });
 
     if (!bid) {
-        const error = new Error("No bid found for this month");
+        const error = new Error("No bid found for this date");
         error.statusCode = 404;
         throw error;
     }
 
     if(userId){
         await this.usageService.usage({
-            userId : user.id,
+            userId : userId,
             action:"GET_BID",
             endpoint : "/bid",
             method : "GET"
         })
     }
-    return bid;
+      return bid;
     };
 
 
-    selectWinner = async (userId) => {
-            const date = normalizeDate();
+    changeBidStatus = async(winnerUserId,date)=>{
 
-            // 1) Check if winner already exists for today
+        const statusWin = await prisma.bid.update({
+            where: {
+                userId: winnerUserId,
+                bidDate: date
+                },
+            data: {
+                status: "WIN"
+                }
+            });
+
+            const userWin = await prisma.user.findUnique({
+                where:{id:winnerUserId}
+            })
+
+            if (!userWin || !userWin.email) {
+                const error = new Error("Winner user not found");
+                error.statusCode = 404
+                throw error
+            }
+
+
+            await this.notificationService.sendWinnerEmail({
+                to: userWin.email, date:date
+
+            })
+
+            const loserBids = await prisma.bid.findMany({
+                    where: {
+                        bidDate: date,
+                        userId: {
+                            not: winnerUserId
+                        },
+                        status: "ACTIVE"
+                    },
+                    include: {
+                        user: true
+                    }
+                });
+
+                const statusLose = await prisma.bid.updateMany({
+                    where: {
+                        bidDate: date,
+                        userId: {
+                            not: winnerUserId
+                        },
+                        status: "ACTIVE"
+                    },
+                    data: {
+                        status: "LOSE"
+                    }
+                });
+
+                const uniqueEmails = [...new Set(loserBids.map(bid => bid.user.email))];
+
+                for (const email of uniqueEmails) {
+                    await this.notificationService.sendLoserEmail({
+                        to: email,
+                        date
+                    });
+                }
+
+                return {
+                    winnerUpdated: 1,
+                    losersUpdated: statusLose.count
+                };
+
+            }
+
+    selectWinner = async (userId) => {
+           const date = normalizeDate();
+
             const existingWinner = await prisma.featuredAlumnus.findUnique({
                 where: { date },
             });
@@ -114,9 +225,8 @@ class BidService{
                 throw error;
             }
 
-            // 2) Get all bids for today ordered from highest to lowest
             const bids = await prisma.bid.findMany({
-                where: { bidDate: date },
+                where: { bidDate: date,status : "ACTIVE" },
                 orderBy: { amount: "desc" },
             });
 
@@ -126,7 +236,6 @@ class BidService{
                 throw error;
             }
 
-            // 3) Current month range
             const now = new Date();
             const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
             const endOfMonth = new Date(
@@ -143,7 +252,6 @@ class BidService{
             let bonusEventRow = null;
             let selectedWinCount = 0;
 
-            // 4) Check each bidder from highest to lowest
             for (const bid of bids) {
                 const winCount = await prisma.featuredAlumnus.count({
                 where: {
@@ -190,7 +298,6 @@ class BidService{
                 throw error;
             }
 
-            // 5) Create winner row
             const winner = await prisma.featuredAlumnus.create({
                 data: {
                 userId: winnerUserId,
@@ -198,7 +305,10 @@ class BidService{
                 },
             });
 
-            // 6) If this was the 4th win, mark the bonus event as used
+            if(winner){
+                await this.changeBidStatus(winnerUserId,date);
+            }
+
             if (selectedWinCount === 3 && bonusEventRow) {
                 await prisma.alumniEventParticipation.update({
                 where: {
@@ -289,13 +399,71 @@ class BidService{
                    status : "LOSE",
                    messages : "Sorry, you were not selected today."
                 }               
-            }
-
-
-
-            
+            }           
 
         }
+
+        cancelBid = async (userId) => {
+            const bidDate = normalizeDate();
+
+            const bid = await prisma.bid.findUnique({
+                where: {
+                    userId_bidDate: {
+                        userId,
+                        bidDate
+                    }
+                }
+            });
+
+            if (!bid) {
+                const error = new Error("No bid found for today");
+                error.statusCode = 404;
+                throw error;
+            }
+
+            if (bid.status === "CANCELLED") {
+                const error = new Error("Bid already cancelled");
+                error.statusCode = 400;
+                throw error;
+            }
+
+            const cancelledBid = await prisma.bid.update({
+                where: {
+                    userId_bidDate: {
+                        userId,
+                        bidDate
+                    }
+                },
+                data: {
+                    status: "CANCELLED"
+                }
+            });
+
+            const user = await prisma.user.findUnique({
+                where:{
+                    id:userId
+                }
+            })
+
+            await this.notificationService.sendCancelEmail({
+                to:user.email,date:bidDate
+            })
+
+            if (userId) {
+                await this.usageService.usage({
+                    userId: userId,
+                    action: "CANCEL_BID",
+                    endpoint: "/bid",
+                    method: "DELETE"
+                });
+            }
+
+            return {
+                message: "Bid cancelled successfully",
+                bid: cancelledBid
+            };
+        };
+
 
 
 }

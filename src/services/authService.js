@@ -2,9 +2,9 @@ const {prisma} = require('../config/prisma.js');
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const {generateAccessToken,generateRefreshToken, verifyRefreshToken} = require('../utils/jwt');
-const { ref } = require('process');
-const { access } = require('fs');
+const {env} = require('../config/env.js')
 const { UsageService } = require('./usageService.js');
+const {sendEmail} = require('../utils/sendMail.js')
 
 const allowedDomains = ["iit.ac.lk","westminster.ac.uk"]
 
@@ -18,16 +18,16 @@ class AuthService{
 
         let isValidEmail = false
 
-        if(email && email.includes("@")){
-            const domains = email.split("@")[1];
-            isValidEmail = allowedDomains.includes(domains)
-        }
+        // if(email && email.includes("@")){
+        //     const domains = email.split("@")[1];
+        //     isValidEmail = allowedDomains.includes(domains)
+        // }
 
-        if(!isValidEmail){
-            const error = new Error("Email not Valid!")
-            error.statusCode = 409
-            throw error
-        }
+        // if(!isValidEmail){
+        //     const error = new Error("Email not Valid!")
+        //     error.statusCode = 409
+        //     throw error
+        // }
 
         const existing = await prisma.user.findUnique({
             where : {email}
@@ -35,7 +35,7 @@ class AuthService{
 
         if(existing){
                 const error = new Error("Email already registered");
-                error.statusCode = 409 //Conflict
+                error.statusCode = 409 
                 throw error
             }
 
@@ -73,6 +73,145 @@ class AuthService{
 
 }
 
+        forgotPassword = async (email) => {
+            if (!email) {
+                const error = new Error("Email is required");
+                error.statusCode = 400;
+                throw error;
+            }
+
+            const user = await prisma.user.findUnique({
+                where: { email }
+            });
+
+            if (!user) {
+                return {
+                    message: "If an account with that email exists, a password reset link has been sent"
+                };
+            }
+
+            await prisma.passwordResetToken.deleteMany({
+                where: {
+                    userId: user.id,
+                    usedAt: null
+                }
+            });
+
+            const rawToken = crypto.randomBytes(32).toString("hex");
+            const tokenHash = crypto.createHash("sha256").update(rawToken).digest("hex");
+            const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
+
+            await prisma.passwordResetToken.create({
+                data: {
+                    userId: user.id,
+                    tokenHash,
+                    expiresAt
+                }
+            });
+
+            const resetLink = `${env.frontendUrl}/reset-password?token=${rawToken}`;
+
+            await sendEmail({
+                to: user.email,
+                subject: "Reset Your Password",
+                html: `
+                    <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+                        <h2>Password Reset</h2>
+                        <p>You requested to reset your password.</p>
+                        <p>Click the button below to reset it:</p>
+                        <a href="${resetLink}" 
+                        style="display:inline-block;padding:10px 18px;background:#2563eb;color:#fff;text-decoration:none;border-radius:6px;">
+                        Reset Password
+                        </a>
+                        <p style="margin-top:16px;">This link will expire in 15 minutes.</p>
+                        <p>If you did not request this, you can ignore this email.</p>
+                    </div>
+                `
+            });
+
+            if (user.id) {
+                await this.usageService.usage({
+                    userId: user.id,
+                    action: "FORGOT_PASSWORD",
+                    endpoint: "/auth/forgot-password",
+                    method: "POST"
+                });
+            }
+
+            return {
+                message: "If an account with that email exists, a password reset link has been sent"
+            };
+        };
+
+
+        resetPassword = async (token, newPassword) => {
+
+            if (!token || !newPassword) {
+                const error = new Error("Token and new password are required");
+                error.statusCode = 400;
+                throw error;
+            }
+
+            const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
+
+            const resetRecord = await prisma.passwordResetToken.findUnique({
+                where: { tokenHash }
+            });
+
+            if (!resetRecord) {
+                const error = new Error("Invalid reset token");
+                error.statusCode = 400;
+                throw error;
+            }
+
+            if (resetRecord.usedAt) {
+                const error = new Error("Reset token already used");
+                error.statusCode = 400;
+                throw error;
+            }
+
+            if (resetRecord.expiresAt < new Date()) {
+                const error = new Error("Reset token expired");
+                error.statusCode = 400;
+                throw error;
+            }
+
+            const passwordHash = await bcrypt.hash(newPassword, 12);
+
+            await prisma.$transaction([
+                prisma.user.update({
+                    where: { id: resetRecord.userId },
+                    data: { passwordHash }
+                }),
+                prisma.passwordResetToken.update({
+                    where: { tokenHash },
+                    data: { usedAt: new Date() }
+                }),
+                prisma.refreshToken.updateMany({
+                    where: {
+                        userId: resetRecord.userId,
+                        revokedAt: null
+                    },
+                    data: {
+                        revokedAt: new Date()
+                    }
+                })
+            ]);
+
+            await this.usageService.usage({
+                userId: resetRecord.userId,
+                action: "RESET_PASSWORD",
+                endpoint: "/auth/reset-password",
+                method: "POST"
+            });
+
+            return {
+                message: "Password reset successfully"
+            };
+        };
+
+
+
 loginUser = async (email,password)=>{
     const user = await prisma.user.findUnique({
         where: {email}
@@ -84,7 +223,8 @@ loginUser = async (email,password)=>{
         throw error
     }
 
-    const match = await bcrypt.compare(password,user.passwordHash)
+    const match = await bcrypt.compare(password,user.passwordHash);
+
     if(!match){
         const error = new Error("Invalid Email or Password");
         error.statusCode = 401;
@@ -129,12 +269,12 @@ loginUser = async (email,password)=>{
             isVerified : user.isVerified
         },
 
-        accessToken : accessToken,
-        refreshToken :refreshToken
+            accessToken : accessToken,
+            refreshToken :refreshToken
+        }
+
+
     }
-
-
-}
 
     refresh = async(refreshToken)=>{
         if(!refreshToken){
@@ -174,20 +314,22 @@ loginUser = async (email,password)=>{
             throw error;
         }
 
-        const newAccessToken = generateAccessToken({
-            userId:user.id,
-            email:user.email
-        })
+       const newAccessToken = generateAccessToken({
+            userId: user.id,
+            email: user.email,
+            role: user.role
+        });
 
         return {
-        accessToken : newAccessToken
-    }   
+            accessToken : newAccessToken
+        }   
     
     }
 
 
 
     logout = async(refreshToken,userId)=>{
+        console.log('hit')
         if(!refreshToken){
             const error = new Error("Refresh token is required");
             error.statusCode = 401;
@@ -213,7 +355,7 @@ loginUser = async (email,password)=>{
 
         if(userId){
             await this.usageService.usage({
-                userId : user.id,
+                userId : userId,
                 action:"LOGOUT",
                 endpoint : "/auth/logout",
                 method : "POST"
@@ -228,8 +370,7 @@ loginUser = async (email,password)=>{
         const tokenHash = crypto.createHash('sha256').update(rawToken).digest('hex');
 
         const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
-        console.log("prisma =", prisma);
-console.log("emailVerificationToken model =", prisma.emailVerificationToken);
+        
         await prisma.emailVerificationToken.deleteMany({
             where:{userId}
         })

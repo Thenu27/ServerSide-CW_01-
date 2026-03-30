@@ -9,6 +9,12 @@ class ProfileController{
         try{
             const {fullName, bio, linkedIn, imageUrl} = req.body
 
+            if (!fullName) {
+                const error = new Error("Full name is required");
+                error.statusCode = 400;
+                throw error;
+            }
+
             const userId = req.user.userId;
 
             const profile = await this.profileService.createProfile(
@@ -19,7 +25,7 @@ class ProfileController{
                 imageUrl
             )
 
-            return res.status(200).json({
+            return res.status(201).json({
                 status: "success",
                 message: "Profile created successfully",
                 profile,
@@ -32,7 +38,6 @@ class ProfileController{
     getProfile = async(req,res,next)=>{
         try{
             const userId = req.user.userId;
-
             const profile = await this.profileService.getProfile(userId);
 
             return res.status(200).json({
@@ -65,6 +70,24 @@ class ProfileController{
         }
 
     }
+
+    deleteProfile = async (req, res, next) => {
+        try {
+            const userId = req.user.userId;
+
+            const result = await this.profileService.deleteProfile(userId);
+
+            return res.status(200).json({
+                status: "success",
+                message: result.message
+            });
+        } catch (err) {
+            next(err);
+        }
+    };
+
+
+
 
 }
 

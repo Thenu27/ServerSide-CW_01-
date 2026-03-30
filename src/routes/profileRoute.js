@@ -95,6 +95,24 @@ profileRouter.get('/',AuthMiddleware.requireAuth,profileController.getProfile)
  *       404:
  *         description: Profile not found
  */
-profileRouter.put('/',AuthMiddleware.requireAuth,profileController.updateProfile)
+profileRouter.put('/',AuthMiddleware.requireAuth,profileController.updateProfile);
 
-module.exports={profileRouter} 
+/**
+ * @swagger
+ * /profile:
+ *   delete:
+ *     summary: Delete logged-in user's profile
+ *     tags: [Profile]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Profile deleted successfully
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Profile not found
+ */
+profileRouter.delete('/', AuthMiddleware.requireAuth, profileController.deleteProfile);
+
+module.exports={profileRouter}; 

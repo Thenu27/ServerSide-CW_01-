@@ -1,4 +1,4 @@
-const e = require("express");
+const express = require("express");
 const { CertificationService } = require("../services/certificationService")
 
 class CertificationController{
@@ -13,8 +13,9 @@ class CertificationController{
 
             const certification = await this.certificationService.addCertification(userId,name,issuer,year)
 
-            res.status(200).json({
+            res.status(201).json({
                 status:"success",
+                message: "Certification added successfully",
                 certification
             })
 
@@ -34,6 +35,7 @@ class CertificationController{
 
             res.status(200).json({
                 status:"success",
+                message: "Certifications retrieved successfully",
                 certification
             })
 
@@ -42,6 +44,49 @@ class CertificationController{
             next(err)
         }
     }
+
+    deleteCertification = async (req, res, next) => {
+        try {
+            const userId = req.user.userId;
+            const { id } = req.params;
+
+            const result = await this.certificationService.deleteCertification(userId, id);
+
+            res.status(200).json({
+                status: "success",
+                message: result.message
+            });
+        } catch (err) {
+            next(err);
+        }
+    };
+
+
+    updateCertification = async (req, res, next) => {
+        try {
+            const userId = req.user.userId;
+            const { id } = req.params;
+            const { name, issuer, year } = req.body;
+
+            const certification = await this.certificationService.updateCertification(
+                userId,
+                id,
+                name,
+                issuer,
+                year
+            );
+
+            res.status(200).json({
+                status: "success",
+                message: "Certification updated successfully",
+                certification
+            });
+        } catch (err) {
+            next(err);
+        }
+    };
+
+
 }
 
 module.exports={CertificationController}

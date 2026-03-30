@@ -16,8 +16,9 @@ class LiscenceController{
                 userId,name,issuer,year
             )
 
-            res.status(200).json({
+            res.status(201).json({
                 status:"success",
+                message: "Licence added successfully",
                 liscence
             })
         }catch(err){
@@ -34,6 +35,7 @@ class LiscenceController{
 
             res.status(200).json({
                 status:"success",
+                message: "Licences retrieved successfully",
                 liscence
             })
 
@@ -41,6 +43,48 @@ class LiscenceController{
             next(err)
         }
     }
+
+    deleteLiscence = async (req, res, next) => {
+        try {
+            const userId = req.user.userId;
+            const { id } = req.params;
+
+            const result = await this.liscenceService.deleteLiscence(userId, id);
+
+            res.status(200).json({
+                status: "success",
+                message: result.message
+            });
+        } catch (err) {
+            next(err);
+        }
+    };
+
+    updateLiscence = async (req, res, next) => {
+        try {
+            const userId = req.user.userId;
+            const { id } = req.params;
+            const { name, issuer, year } = req.body;
+
+            const liscence = await this.liscenceService.updateLiscence(
+                userId,
+                id,
+                name,
+                issuer,
+                year
+            );
+
+            res.status(200).json({
+                status: "success",
+                message: "Licence updated successfully",
+                liscence
+            });
+        } catch (err) {
+            next(err);
+        }
+    };
+
+
 }
 
 module.exports={LiscenceController}

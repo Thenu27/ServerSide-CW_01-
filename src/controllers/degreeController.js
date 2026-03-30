@@ -1,4 +1,3 @@
-const { prisma } = require("../config/prisma");
 const { DegreeService } = require("../services/degreeService");
 
 class DegreeController{
@@ -13,7 +12,7 @@ class DegreeController{
             const userId = req.user.userId
             const degree = await this.degreeService.addDegree(userId,degreeName,institution,year)
 
-            res.status(200).json({
+            res.status(201).json({
                 status:"Success",
                 message:"Degree added succesfully!",
                 degree
@@ -26,11 +25,11 @@ class DegreeController{
     getDegree = async(req,res,next)=>{
         try{
             const userId = req.user.userId;
-
             const degree = await this.degreeService.getDegree(userId);
 
             res.status(200).json({
                 status : "Success",
+                message: "Degrees retrieved successfully",
                 degree
             })
         }catch(err){
@@ -38,6 +37,50 @@ class DegreeController{
         }
     }
 
+    
+    deleteDegree = async (req, res, next) => {
+        try {
+            const userId = req.user.userId;
+            const { id } = req.params;
+
+            const result = await this.degreeService.deleteDegree(userId, id);
+
+            res.status(200).json({
+                status: "success",
+                message: result.message
+            });
+        } catch (err) {
+            next(err);
+        }
+    };
+
+
+    updateDegree = async (req, res, next) => {
+        try {
+            const userId = req.user.userId;
+            const { id } = req.params;
+            const { degreeName, institution, year } = req.body;
+
+            const degree = await this.degreeService.updateDegree(
+                userId,
+                id,
+                degreeName,
+                institution,
+                year
+            );
+
+            res.status(200).json({
+                status: "success",
+                message: "Degree updated successfully",
+                degree
+            });
+        } catch (err) {
+            next(err);
+        }
+    };
+
+
+    
 
 }
 

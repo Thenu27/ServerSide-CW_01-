@@ -1,10 +1,17 @@
-const { prisma } = require("../config/prisma")
+const { prisma } = require("../config/prisma");
+const { UsageService } = require("./usageService");
 
 class ProfileService{
+
+    constructor(){
+        this.usageService = new UsageService();
+    }
+
     createProfile = async(userId, fullName, bio, linkedIn, imageUrl) =>{
         const existingProfile = await prisma.profile.findUnique({
             where : {userId :userId}
         })
+
 
         if(existingProfile){
             const error = new Error('Profile Already Exist!');
@@ -16,9 +23,9 @@ class ProfileService{
             data:{
                 userId,
                 fullName,
-                bio,
-                linkedIn,
-                imageUrl
+                bio: bio || null,
+                linkedIn : linkedIn|| null,
+                imageUrl : imageUrl|| null
             }
         })
 
@@ -37,12 +44,19 @@ class ProfileService{
 
     getProfile = async(userId)=>{
         const profile = await prisma.profile.findUnique({
-            where:{userId}
+            where:{userId},
+            include:{
+                degrees: true,
+                employmentHistory: true,
+                certifications: true,
+                licences: true,
+                courses: true
+            }
         })
 
         if(!profile){
             const error = new Error('Profile Not Found!');
-            error.statusCode = 409;
+            error.statusCode = 404; // Not Found
             throw error
         }
 
@@ -84,13 +98,45 @@ class ProfileService{
                 userId : userId,
                 action:"UPDATE_PROFILE",
                 endpoint : "/profile",
-                method : "GET"
+                method : "PUT"
             })
         }
 
         return updatedProfile
 
     }
+
+    deleteProfile = async (userId) => {
+        const existingProfile = await prisma.profile.findUnique({
+            where: { userId }
+        });
+
+        if (!existingProfile) {
+            const error = new Error("Profile not found!");
+            error.statusCode = 404;
+            throw error;
+        }
+
+        await prisma.profile.delete({
+            where: { userId }
+        });
+
+        if (userId) {
+            await this.usageService.usage({
+                userId: userId,
+                action: "DELETE_PROFILE",
+                endpoint: "/profile",
+                method: "DELETE"
+            });
+        }
+
+        return { message: "Profile deleted successfully" };
+    };
+
+
+
+
+
 }
 
 module.exports={ProfileService}

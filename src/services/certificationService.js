@@ -8,7 +8,13 @@ class CertificationService{
     }
 
     addCertification = async(userId, name, issuer, year)=>{
-        
+
+        if (!name || !issuer || year === undefined || year === null) {
+            const error = new Error("Name, issuer, and year are required");
+            error.statusCode = 400;
+            throw error;
+        }
+
         const profile = await prisma.profile.findUnique({
             where:{userId}
         })
@@ -58,6 +64,13 @@ class CertificationService{
             orderBy:{createdAt:'desc'}
         })
 
+        if(!certification || certification.length === 0){
+            const error = new Error("No certifications Found");
+            error.statusCode = 404;
+            throw error
+        }
+
+
         if(userId){
             await this.usageService.usage({
               userId : userId,
@@ -69,6 +82,107 @@ class CertificationService{
 
         return certification
     }
+
+    deleteCertification = async (userId, certificationId) => {
+        const profile = await prisma.profile.findUnique({
+            where: { userId }
+        });
+
+        if (!profile) {
+            const error = new Error("Profile not found!");
+            error.statusCode = 404;
+            throw error;
+        }
+
+        const certification = await prisma.certification.findUnique({
+            where: { id: certificationId }
+        });
+
+        if (!certification) {
+            const error = new Error("Certification not found!");
+            error.statusCode = 404;
+            throw error;
+        }
+
+        if (certification.profileId !== profile.id) {
+            const error = new Error("Unauthorized to delete this certification!");
+            error.statusCode = 401;
+            throw error;
+        }
+
+        await prisma.certification.delete({
+            where: { id: certificationId }
+        });
+
+        if (userId) {
+            await this.usageService.usage({
+                userId: userId,
+                action: "DELETE_CERTIFICATION",
+                endpoint: `/certification/${certificationId}`,
+                method: "DELETE"
+            });
+        }
+
+        return { message: "Certification deleted successfully" };
+    };
+
+
+    updateCertification = async (userId, certificationId, name, issuer, year) => {
+
+        if (!name || !issuer || year === undefined || year === null) {
+            const error = new Error("Name, issuer, and year are required");
+            error.statusCode = 400;
+            throw error;
+        }
+
+        const profile = await prisma.profile.findUnique({
+            where: { userId }
+        });
+
+        if (!profile) {
+            const error = new Error("Profile not found!");
+            error.statusCode = 404;
+            throw error;
+        };
+
+        const certification = await prisma.certification.findUnique({
+            where: { id: certificationId }
+        });
+
+        if (!certification) {
+            const error = new Error("Certification not found!");
+            error.statusCode = 404;
+            throw error;
+        }
+
+        if (certification.profileId !== profile.id) {
+            const error = new Error("Forbidden to update this certification!");
+            error.statusCode = 403;
+            throw error;
+        }
+        
+        const updatedCertification = await prisma.certification.update({
+            where: { id: certificationId },
+            data: {
+                name,
+                issuer,
+                year
+            }
+        });
+
+        await this.usageService.usage({
+            userId,
+            action: "UPDATE_CERTIFICATION",
+            endpoint: `/certification/${certificationId}`,
+            method: "PUT"
+        });
+
+        return updatedCertification;
+    };
+
+
+
+
 }
 
 module.exports={CertificationService}

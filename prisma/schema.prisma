@@ -21,13 +21,14 @@ model User {
   bids Bid[]
   featured FeaturedAlumnus[]
   eventParticipations AlumniEventParticipation[]
+  passwordResetTokens PasswordResetToken[]  
   role String @default("USER")
 }
 
 model Profile {
   id        String   @id @default(cuid())
   userId    String   @unique
-  fullName  String?
+  fullName  String
   bio       String?
   linkedIn  String?
   imageUrl  String?
@@ -147,11 +148,20 @@ model Course {
   @@index([profileId])
 }
 
+
+enum BidStatus{
+  ACTIVE
+  CANCELLED  
+  WIN
+  LOSE
+}
+
 model Bid {
   id        String   @id @default(cuid())
   userId    String
   amount    Float
   bidDate   DateTime
+  status    BidStatus @default(ACTIVE)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -216,4 +226,15 @@ model UsageLog {
   endpoint  String?
   method    String?
   createdAt DateTime @default(now())
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  userId    String
+  tokenHash String   @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

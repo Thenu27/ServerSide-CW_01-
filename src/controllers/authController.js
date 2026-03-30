@@ -1,4 +1,3 @@
-const { token } = require("morgan");
 const { AuthService } = require("../services/authService");
 
 class AuthController{
@@ -27,10 +26,8 @@ class AuthController{
     login = async(req,res,next)=>{
         try{
 
-            const {email,password} = req.body
-            const userId = req.user.userId
-
-            const result = await this.authService.loginUser(email,password,userId)
+            const {email,password} = req.body;
+            const result = await this.authService.loginUser(email,password);
 
             res.status(200).json({
                 status:"success",
@@ -64,8 +61,9 @@ class AuthController{
     logout = async(req,res,next)=>{
         try{
             const {refreshToken} = req.body;
-
-            const result = await this.authService.logout(refreshToken);
+            console.log('hit')
+            const userId = req.user.userId
+            const result = await this.authService.logout(refreshToken,userId);
 
             return res.status(200).json({
                 status:"success",
@@ -90,6 +88,39 @@ class AuthController{
             next(err)
         }
     }
+
+    forgotPassword = async (req, res, next) => {
+        try {
+            const { email } = req.body;
+
+            const result = await this.authService.forgotPassword(email);
+
+            return res.status(200).json({
+                status: "success",
+                message: result.message
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    resetPassword = async (req, res, next) => {
+        try {
+            const { token, newPassword } = req.body;
+
+            const result = await this.authService.resetPassword(token, newPassword);
+
+            return res.status(200).json({
+                status: "success",
+                message: result.message
+            });
+        } catch (err) {
+            next(err);
+        }
+    }
+
+
+
 }
 
 module.exports={AuthController}
