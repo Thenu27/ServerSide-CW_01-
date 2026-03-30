@@ -22,6 +22,7 @@ model User {
   featured FeaturedAlumnus[]
   eventParticipations AlumniEventParticipation[]
   passwordResetTokens PasswordResetToken[]  
+  apiClients ApiClient[]
   role String @default("USER")
 }
 
@@ -154,6 +155,7 @@ enum BidStatus{
   CANCELLED  
   WIN
   LOSE
+  PENDING
 }
 
 model Bid {
@@ -196,27 +198,26 @@ model AlumniEventParticipation {
 }
 
 model ApiClient {
-  id        String   @id @default(cuid())
+  id        String        @id @default(cuid())
   name      String
-  apiKey    String   @unique
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
+  apiKey    String        @unique
+  isActive  Boolean       @default(true)
+  createdAt DateTime      @default(now())
 
-  logs ApiUsageLog[]
+  userId    String
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  logs      ApiUsageLog[]
 }
 
 model ApiUsageLog {
-  id         String    @id @default(cuid())
-  clientId   String
-  endpoint   String
-  method     String
-  accessedAt DateTime  @default(now())
-  statusCode Int?
+  id          String    @id @default(cuid())
+  apiClientId String
+  endpoint    String?
+  method      String?
+  createdAt   DateTime  @default(now())
 
-  client ApiClient @relation(fields: [clientId], references: [id], onDelete: Cascade)
-
-  @@index([clientId])
-  @@index([accessedAt])
+  apiClient   ApiClient @relation(fields: [apiClientId], references: [id], onDelete: Cascade)
 }
 
 model UsageLog {

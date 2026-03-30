@@ -2,6 +2,28 @@ const {sendEmail} = require('../utils/sendMail')
 
 class NotificationService {
 
+        sendEmailVerification = async ({ to, link }) => {
+        await sendEmail({
+            to,
+            subject: "Verify your email",
+            html: `
+                <h2>Verify Your Email</h2>
+                <p>Click the button below to verify your account:</p>
+                <a href="${link}" style="
+                    display:inline-block;
+                    padding:10px 20px;
+                    background-color:#4CAF50;
+                    color:white;
+                    text-decoration:none;
+                    border-radius:5px;
+                ">
+                    Verify Email
+                </a>
+                <p>If you did not register, ignore this email.</p>
+            `
+            });
+        };
+
     sendWinnerEmail = async ({ to, date }) => {
         await sendEmail({
             to,

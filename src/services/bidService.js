@@ -1,3 +1,4 @@
+const { BidStatus } = require("@prisma/client");
 const { prisma } = require("../config/prisma");
 const {normalizeDate} = require('../utils/date');
 const { NotificationService } = require("./notificationService");
@@ -49,7 +50,7 @@ class BidService{
                     userId,
                     amount,
                     bidDate,
-                    status: "ACTIVE"
+                    status: BidStatus.ACTIVE
                 }
             });
         } else if (existingBid.status === "CANCELLED") {
@@ -59,7 +60,7 @@ class BidService{
                 },
                 data: {
                     amount,
-                    status: "ACTIVE"
+                    status: BidStatus.ACTIVE
                 }
             });
         } else {
@@ -120,7 +121,7 @@ class BidService{
         where: {
             userId,
             bidDate,
-            status: "ACTIVE"
+            status: BidStatus.ACTIVE
         }
     });
 
@@ -144,13 +145,15 @@ class BidService{
 
     changeBidStatus = async(winnerUserId,date)=>{
 
-        const statusWin = await prisma.bid.update({
-            where: {
-                userId: winnerUserId,
-                bidDate: date
+            const statusWin = await prisma.bid.update({
+                where: {
+                    userId_bidDate: {
+                        userId: winnerUserId,
+                        bidDate: date
+                    }
                 },
-            data: {
-                status: "WIN"
+                data: {
+                    status: BidStatus.WIN
                 }
             });
 
@@ -176,12 +179,14 @@ class BidService{
                         userId: {
                             not: winnerUserId
                         },
-                        status: "ACTIVE"
+                        status: BidStatus.ACTIVE
                     },
                     include: {
                         user: true
                     }
                 });
+
+                console.log("loserBids:",loserBids)
 
                 const statusLose = await prisma.bid.updateMany({
                     where: {
@@ -189,12 +194,14 @@ class BidService{
                         userId: {
                             not: winnerUserId
                         },
-                        status: "ACTIVE"
+                        status: BidStatus.ACTIVE
                     },
                     data: {
-                        status: "LOSE"
+                        status: BidStatus.LOSE
                     }
                 });
+
+                console.log("statusLose:",statusLose)
 
                 const uniqueEmails = [...new Set(loserBids.map(bid => bid.user.email))];
 
@@ -226,8 +233,8 @@ class BidService{
             }
 
             const bids = await prisma.bid.findMany({
-                where: { bidDate: date,status : "ACTIVE" },
-                orderBy: { amount: "desc" },
+                where: { bidDate: date, status: BidStatus.ACTIVE },
+                                orderBy: { amount: "desc" },
             });
 
             if (bids.length === 0) {
@@ -365,6 +372,30 @@ class BidService{
         };
 
 
+     getWinnerpublic = async () => {
+        const date = normalizeDate();
+
+        const winner = await prisma.featuredAlumnus.findUnique({
+            where: { date },
+            include: {
+            user: {
+                include: {
+                profile: true,
+                },
+            },
+            },
+        });
+
+        if (!winner) {
+            const error = new Error("No featured alumnus found for today!");
+            error.statusCode = 404;
+            throw error;
+        }
+
+        return winner;
+        };       
+
+
         getMyResult = async(userId)=>{
             const date = normalizeDate()
 
@@ -374,7 +405,7 @@ class BidService{
 
             if(!winner){
                 return{
-                    status : "PENDING",
+                    status : BidStatus.PENDING,
                     messages : "Winner has not been selected yet."
                 }
             }
@@ -391,12 +422,12 @@ class BidService{
 
             if(winner.userId === userId){
                 return{
-                    status : "WIN",
+                    status: BidStatus.WIN,
                     messages : "Congratulations! You are today's winner."
                 }
             }else{
                 return{
-                   status : "LOSE",
+                   status: BidStatus.LOSE,
                    messages : "Sorry, you were not selected today."
                 }               
             }           
@@ -421,7 +452,7 @@ class BidService{
                 throw error;
             }
 
-            if (bid.status === "CANCELLED") {
+            if (bid.status === BidStatus.CANCELLED) {
                 const error = new Error("Bid already cancelled");
                 error.statusCode = 400;
                 throw error;
@@ -435,7 +466,7 @@ class BidService{
                     }
                 },
                 data: {
-                    status: "CANCELLED"
+                    status: BidStatus.CANCELLED
                 }
             });
 

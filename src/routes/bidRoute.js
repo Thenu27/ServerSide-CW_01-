@@ -2,6 +2,7 @@ const express = require("express");
 const { BidController } = require("../controllers/bidController");
 const { AuthMiddleware } = require("../middleware/authMiddleware");
 const { AdminMiddleware } = require("../middleware/adminMiddleware");
+const { ApiKeyMiddleware } = require("../middleware/apiKeyMiddleware");
 
 const bidRouter = express.Router();
 const bidController = new BidController();
@@ -123,6 +124,9 @@ bidRouter.get('/result',AuthMiddleware.requireAuth,bidController.getMyResult);
  *         description: No bid found for today
  */
 bidRouter.delete("/", AuthMiddleware.requireAuth, bidController.cancelBid);
+
+
+
 
 
 module.exports = { bidRouter };

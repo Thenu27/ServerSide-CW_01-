@@ -4,14 +4,16 @@ const crypto = require('crypto');
 const {generateAccessToken,generateRefreshToken, verifyRefreshToken} = require('../utils/jwt');
 const {env} = require('../config/env.js')
 const { UsageService } = require('./usageService.js');
-const {sendEmail} = require('../utils/sendMail.js')
+const {sendEmail} = require('../utils/sendMail.js');
+const { NotificationService } = require('./notificationService.js');
 
 const allowedDomains = ["iit.ac.lk","westminster.ac.uk"]
 
 class AuthService{
 
     constructor(){
-        this.usageService = new UsageService()
+        this.usageService = new UsageService();
+        this.notificationService = new NotificationService()
     }
     
     registerUser = async (email,password)=>{
@@ -64,10 +66,16 @@ class AuthService{
             })
         }
 
-    const verificationToken = await this.createEmailVerificationToken(user.id);
-    console.log("Email verification token:", verificationToken);
+        const verificationToken = await this.createEmailVerificationToken(user.id);
 
+        const verificationLink = `http://localhost:3000/auth/verify-email?token=${verificationToken}`;
 
+        await this.notificationService.sendEmailVerification({
+            to: user.email,
+            link: verificationLink
+        });
+
+        console.log("verificationToken:",verificationToken)
 
     return user
 
