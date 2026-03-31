@@ -30,7 +30,7 @@ const globalLimiter = rateLimit({
 const app = express()
 
 app.use(cors({
-  origin: env.frontendUrl, // your React frontend
+  origin: env.frontendUrl, 
   credentials: true
 }));
 app.use(globalLimiter);
