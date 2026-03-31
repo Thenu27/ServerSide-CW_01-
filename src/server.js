@@ -13,9 +13,13 @@ const { bidRouter } = require('./routes/bidRoute.js');
 const {apiRouter} = require("./routes/apiRoute.js");
 const swaggerUi = require('swagger-ui-express')
 const {swaggerSpec} = require('./config/swagger.js')
-
+const cors = require('cors');
 const app = express()
-app.use(express.json());
+
+app.use(cors({
+  origin: env.frontendUrl, // your React frontend
+  credentials: true
+}));app.use(express.json());
 
 require('./scheduler/winnerScheduler.js')
 

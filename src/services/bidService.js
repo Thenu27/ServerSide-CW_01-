@@ -116,6 +116,8 @@ class BidService{
 
 
     const bidDate = normalizeDate();
+    
+    let currentStatus = null
 
     const bid = await prisma.bid.findFirst({
         where: {
@@ -131,6 +133,22 @@ class BidService{
         throw error;
     }
 
+    const currentWinner = await prisma.bid.findFirst({
+        where: {
+            bidDate,
+            status: BidStatus.ACTIVE
+        },
+        orderBy: {
+            amount: "desc"
+        }
+    });
+
+    if(currentWinner && currentWinner.userId === bid.userId){
+        currentStatus = "WINNING"
+    }else{
+        currentStatus = "LOSING"
+    }
+
     if(userId){
         await this.usageService.usage({
             userId : userId,
@@ -139,7 +157,9 @@ class BidService{
             method : "GET"
         })
     }
-      return bid;
+      return {
+        currentStatus,bid
+      }
     };
 
 

@@ -8,6 +8,6 @@ cron.schedule("0 0 * * *",async()=>{
         await bidService.selectWinner();
         console.log("Winner Selected")
     }catch(err){
-        next(err)
+        console.error("Error selecting winner:", err);
     }
 })
