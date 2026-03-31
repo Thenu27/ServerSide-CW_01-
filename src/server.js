@@ -13,13 +13,28 @@ const { bidRouter } = require('./routes/bidRoute.js');
 const {apiRouter} = require("./routes/apiRoute.js");
 const swaggerUi = require('swagger-ui-express')
 const {swaggerSpec} = require('./config/swagger.js')
+const { rateLimit } = require("express-rate-limit");
+
 const cors = require('cors');
+
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, 
+  limit: 100,              
+  standardHeaders: "draft-8",
+  legacyHeaders: false,
+  message: {
+    status: "error",
+    message: "Too many requests, please try again later."
+  }
+});
 const app = express()
 
 app.use(cors({
   origin: env.frontendUrl, // your React frontend
   credentials: true
-}));app.use(express.json());
+}));
+app.use(globalLimiter);
+app.use(express.json());
 
 require('./scheduler/winnerScheduler.js')
 

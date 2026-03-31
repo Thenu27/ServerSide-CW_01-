@@ -419,6 +419,18 @@ class BidService{
         getMyResult = async(userId)=>{
             const date = normalizeDate()
 
+            const bid = await prisma.bid.findFirst({
+                where:{
+                    bidDate:date,
+                    userId
+                }
+            })
+
+            if(!bid){
+                const error = new Error("No Bid Found!")
+                error.statusCode = 404;
+                throw error
+            }
             const winner = await prisma.featuredAlumnus.findUnique({
                 where : {date}
             })
