@@ -1,4 +1,4 @@
-.programme-chart-card {
+.top-certifications-chart-card {
   background: white;
   border-radius: 16px;
   padding: 20px;
@@ -6,13 +6,13 @@
   min-height: 380px;
 }
 
-.programme-chart-card h3 {
+.top-certifications-chart-card h3 {
   font-size: 18px;
   margin-bottom: 16px;
   color: #111827;
 }
 
-.programme-chart-wrapper {
+.top-certifications-chart-wrapper {
   width: 100%;
   height: 320px;
 }
