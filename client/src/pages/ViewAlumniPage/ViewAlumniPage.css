@@ -1,0 +1,248 @@
+/* ── Page layout ───────────────────────────────────── */
+.alumni-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  font-family: sans-serif;
+  color: #1a1a1a;
+}
+
+/* ── Page header ───────────────────────────────────── */
+.page-header {
+  margin-bottom: 2rem;
+}
+
+.page-header h1 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin: 0 0 0.35rem;
+  color: #111;
+}
+
+.page-header p {
+  font-size: 0.95rem;
+  color: #666;
+  margin: 0;
+}
+
+/* ── Stats row ─────────────────────────────────────── */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.stat-card {
+  background: #f5f6f8;
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+}
+
+.stat-label {
+  font-size: 0.78rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.35rem;
+}
+
+.stat-value {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #111;
+}
+
+/* ── Filters bar ───────────────────────────────────── */
+.filters-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+  background: #f5f6f8;
+  border-radius: 10px;
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  flex: 1;
+  min-width: 150px;
+}
+
+.filter-group label {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.filter-group select,
+.filter-group input {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+  border: 1px solid #ddd;
+  border-radius: 7px;
+  background: #fff;
+  color: #1a1a1a;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.filter-group select:focus,
+.filter-group input:focus {
+  border-color: #185FA5;
+}
+
+.btn-reset {
+  padding: 0.5rem 1.25rem;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #555;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 7px;
+  cursor: pointer;
+  align-self: flex-end;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.btn-reset:hover {
+  background: #f0f0f0;
+  border-color: #bbb;
+}
+
+/* ── Results meta ──────────────────────────────────── */
+.results-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.83rem;
+  color: #888;
+  margin-bottom: 0.75rem;
+}
+
+/* ── Table ─────────────────────────────────────────── */
+.table-wrap {
+  border: 1px solid #e8e8e8;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+thead {
+  background: #f5f6f8;
+}
+
+thead th {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+tbody tr {
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.1s;
+}
+
+tbody tr:last-child {
+  border-bottom: none;
+}
+
+tbody tr:hover {
+  background: #fafafa;
+}
+
+tbody td {
+  padding: 0.8rem 1rem;
+  color: #333;
+  vertical-align: middle;
+}
+
+/* ── Name cell ─────────────────────────────────────── */
+.td-name {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.name-text {
+  font-weight: 500;
+  color: #111;
+}
+
+/* ── Avatar ────────────────────────────────────────── */
+.avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.avatar-blue     { background: #E6F1FB; color: #185FA5; }
+.avatar-teal     { background: #E1F5EE; color: #0F6E56; }
+.avatar-pink     { background: #FBEAF0; color: #993556; }
+.avatar-amber    { background: #FAEEDA; color: #854F0B; }
+.avatar-purple   { background: #EEEDFE; color: #534AB7; }
+.avatar-green    { background: #EAF3DE; color: #3B6D11; }
+
+/* ── Industry badge ────────────────────────────────── */
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.65rem;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+.badge-it         { background: #E6F1FB; color: #185FA5; }
+.badge-finance    { background: #EAF3DE; color: #3B6D11; }
+.badge-marketing  { background: #FAEEDA; color: #854F0B; }
+.badge-healthcare { background: #FBEAF0; color: #993556; }
+.badge-education  { background: #EEEDFE; color: #534AB7; }
+.badge-default    { background: #f0f0f0; color: #666; }
+
+/* ── Empty state ───────────────────────────────────── */
+.empty-state {
+  text-align: center;
+  padding: 2.5rem;
+  color: #aaa;
+  font-size: 0.92rem;
+}
+
+/* ── Responsive ────────────────────────────────────── */
+@media (max-width: 768px) {
+  .stats-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .filters-bar {
+    flex-direction: column;
+  }
+
+  .filter-group {
+    min-width: 100%;
+  }
+
+  .btn-reset {
+    width: 100%;
+  }
+}
