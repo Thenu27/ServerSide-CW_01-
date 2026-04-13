@@ -1,3 +1,4 @@
+import AlumniPreviewSection from "../AlumniPreviewSection/AlumniPreviewSection";
 import CareerRoleDistributionChart from "../Charts/CareerRoleDistributionChart/CareerRoleDistributionChart";
 import GraduationYearChart from "../Charts/GraduationYearChart/GraduationYearChart";
 import IndustrySectorChart from "../Charts/IndustrySectorChart/IndustrySectorChart";
@@ -6,6 +7,9 @@ import SkillsGapEmergingTrendsChart from "../Charts/SkillsGapEmergingTrendsChart
 import TopCertificationsChart from "../Charts/TopCertificationsChart/TopCertificationsChart";
 import TopEmployersChart from "../Charts/TopEmployersChart/TopEmployersChart";
 import TopProfessionalCoursesChart from "../Charts/TopProfessionalCoursesChart/TopProfessionalCoursesChart";
+import ExportReportSection from "../ExportReportSection/ExportReportSection";
+import InsightsPanel from "../InsightsPanel/InsightsPanel";
+import Sidebar from "../Sidebar/Sidebar";
 import "./ChartSection.css";
 
 const ChartSection = () => {
@@ -20,6 +24,10 @@ const ChartSection = () => {
         <TopProfessionalCoursesChart/>
         <SkillsGapEmergingTrendsChart/>
 
+        <ExportReportSection/>
+        <AlumniPreviewSection/>
+        <InsightsPanel/>
+        <Sidebar/>
     </div>
   );
 };

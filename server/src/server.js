@@ -16,6 +16,7 @@ const {swaggerSpec} = require('./config/swagger.js')
 const { rateLimit } = require("express-rate-limit");
 
 const cors = require('cors');
+const { analyticsRoute } = require('./routes/analyticsRoute.js');
 
 const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, 
@@ -47,8 +48,10 @@ app.use('/employment',employmentRouter);
 app.use('/certification',certificationRouter);
 app.use('/liscence',liscenceRouter);
 app.use('/course',courseRouter)
-app.use('/bid',bidRouter)
-app.use('/api',apiRouter)
+app.use('/bid',bidRouter);
+app.use('/api',apiRouter);
+
+app.use('/analytics',analyticsRoute)
 
 app.use(ErrorMiddleware.handle);
 

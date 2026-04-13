@@ -8,10 +8,11 @@ class EmploymentController{
     addEmployment = async(req,res,next)=>{
         console.log('hit')
         try{
-            const {companyName, jobTitle, startDate, endDate, description} = req.body
+            const {companyName, jobTitle, startDate, endDate, description,industrySector} = req.body
             const userId = req.user.userId
+
             const employment = await this.employmentService.addEmployment(
-                userId,companyName, jobTitle, startDate, endDate, description
+                userId,companyName, jobTitle, startDate, endDate, description, industrySector
             )
 
             res.status(201).json({

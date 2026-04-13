@@ -103,6 +103,7 @@ model EmploymentHistory {
   startDate   DateTime
   endDate     DateTime?
   description String?
+  industrySector String
   createdAt   DateTime @default(now())
 
   profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)

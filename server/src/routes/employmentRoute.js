@@ -5,7 +5,7 @@ const employmentRouter = require('express').Router();
 const employmentController = new EmploymentController()
 
 /**
- * @swagger
+ * @swagger   
  * /employment:
  *   post:
  *     summary: Add employment history

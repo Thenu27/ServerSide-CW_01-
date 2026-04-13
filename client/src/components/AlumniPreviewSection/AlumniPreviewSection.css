@@ -1,0 +1,57 @@
+.alumni-preview-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  min-height: 260px;
+}
+
+.alumni-preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.alumni-preview-header h3 {
+  font-size: 18px;
+  color: #111827;
+}
+
+.alumni-preview-header button {
+  border: none;
+  outline: none;
+  background: #3b82f6;
+  color: white;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.alumni-preview-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.alumni-preview-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.alumni-preview-table th,
+.alumni-preview-table td {
+  text-align: left;
+  padding: 12px 10px;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 14px;
+}
+
+.alumni-preview-table th {
+  color: #374151;
+  font-weight: 600;
+}
+
+.alumni-preview-table td {
+  color: #6b7280;
+}

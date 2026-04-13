@@ -7,25 +7,27 @@ class EmploymentService{
       this.usageService = new UsageService()
     }
 
-    addEmployment = async(userId,companyName,jobTitle,startDate,endDate,description)=>{
+    addEmployment = async(userId,companyName,jobTitle,startDate,endDate,description,industrySector)=>{
+
       const profile = await prisma.profile.findUnique({
         where:{userId}
       }) 
 
-    if(!profile){
+      if(!profile){
         const error = new Error("Profile not found!");
         error.statusCode = 404;
         throw error
       }
 
-    const employment = await prisma.employmentHistory.create({
+     const employment = await prisma.employmentHistory.create({
         data:{
             profileId : profile.id,
             companyName,
             jobTitle,
             startDate:new Date(startDate),
             endDate:endDate ? new Date(endDate) : null,
-            description
+            description,
+            industrySector
         }
     }) 
 

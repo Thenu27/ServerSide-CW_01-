@@ -1,0 +1,39 @@
+.insights-panel-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  min-height: 220px;
+}
+
+.insights-panel-card h3 {
+  font-size: 18px;
+  margin-bottom: 16px;
+  color: #111827;
+}
+
+.insights-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.insight-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f9fafb;
+  padding: 12px 14px;
+  border-radius: 10px;
+}
+
+.label {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+}
