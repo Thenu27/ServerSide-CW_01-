@@ -62,7 +62,7 @@ const IndustrySectorChart = ({ data }) => {
         <ResponsiveContainer width="100%" height={300}>
           <PieChart>
             <Pie
-              data={chartData}
+              data={industryData}
               dataKey="value"
               nameKey="name"
               cx="50%"

@@ -8,18 +8,34 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+
+
 import "./TopEmployersChart.css";
+import api from '../../Api/Api'
+import { useEffect, useState } from "react";
 
 const TopEmployersChart = ({ data }) => {
-  const dummyData = [
-    { employer: "Google", count: 35 },
-    { employer: "Microsoft", count: 30 },
-    { employer: "Amazon", count: 25 },
-    { employer: "Meta", count: 18 },
-    { employer: "IBM", count: 12 },
-  ];
 
-  const chartData = data && data.length > 0 ? data : dummyData;
+  const [topEmployers,setTopEmployers] = useState([])
+
+  const getEmployers=async()=>{
+    try{
+      const response = await api.get('analytics/employer');
+
+      if(response){
+        console.log(response.data.topEmployers)
+        setTopEmployers(response.data.topEmployers)
+      }
+        
+    }catch(err){
+      console.log(err)
+    }
+
+  }
+
+  useEffect(()=>{
+    getEmployers()
+  },[])
 
   return (
     <div className="top-employers-chart-card">
@@ -28,7 +44,7 @@ const TopEmployersChart = ({ data }) => {
       <div className="top-employers-chart-wrapper">
         <ResponsiveContainer width="100%" height={300}>
           <BarChart
-            data={chartData}
+            data={topEmployers}
             layout="vertical"   
             margin={{ top: 10, right: 20, left: 40, bottom: 10 }}
           >
@@ -37,7 +53,7 @@ const TopEmployersChart = ({ data }) => {
             <XAxis type="number" />
 
             <YAxis
-              dataKey="employer"
+              dataKey="name"
               type="category"
               width={120}
             />
@@ -46,7 +62,7 @@ const TopEmployersChart = ({ data }) => {
             <Legend />
 
             <Bar
-              dataKey="count"
+              dataKey="value"
               fill="#3B82F6"
               radius={[0, 8, 8, 0]}
             />

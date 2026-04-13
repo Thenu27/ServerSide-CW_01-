@@ -9,17 +9,34 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import "./TopCertificationsChart.css";
+import { useEffect, useState } from "react";
+import api from "../../Api/Api";
 
 const TopCertificationsChart = ({ data }) => {
-  const dummyData = [
-    { certification: "AWS", count: 28 },
-    { certification: "Scrum Master", count: 22 },
-    { certification: "CCNA", count: 18 },
-    { certification: "Azure", count: 15 },
-    { certification: "Google Cloud", count: 10 },
-  ];
 
-  const chartData = data && data.length > 0 ? data : dummyData;
+  const [topCertifications,setTopCertifications] = useState([])
+
+  const getCertifications = async()=>{
+    try{
+      const response = await api.get('/analytics/certification');
+      
+      if(response){
+        console.log(response.data.topCertification);
+        setTopCertifications(response.data.topCertification)
+      }
+
+    }catch(err){
+      console.log(err)
+    }
+  }
+
+  useEffect(()=>{
+    getCertifications()
+  },[])
+
+
+
+
 
   return (
     <div className="top-certifications-chart-card">
@@ -28,20 +45,20 @@ const TopCertificationsChart = ({ data }) => {
       <div className="top-certifications-chart-wrapper">
         <ResponsiveContainer width="100%" height={300}>
           <BarChart
-            data={chartData}
+            data={topCertifications}
             layout="vertical"
             margin={{ top: 10, right: 20, left: 30, bottom: 10 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis type="number" />
             <YAxis
-              dataKey="certification"
+              dataKey="name"
               type="category"
               width={120}
             />
             <Tooltip />
             <Legend />
-            <Bar dataKey="count" radius={[0, 8, 8, 0]} />
+            <Bar dataKey="value" radius={[0, 8, 8, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>

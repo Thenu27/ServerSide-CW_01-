@@ -9,17 +9,31 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import "./TopProfessionalCoursesChart.css";
+import api from '../../Api/Api'
+import { useEffect, useState } from "react";
+
 
 const TopProfessionalCoursesChart = ({ data }) => {
-  const dummyData = [
-    { course: "Python for Data Analysis", count: 24 },
-    { course: "Docker Essentials", count: 19 },
-    { course: "Agile Fundamentals", count: 17 },
-    { course: "Tableau Basics", count: 13 },
-    { course: "React Development", count: 11 },
-  ];
 
-  const chartData = data && data.length > 0 ? data : dummyData;
+  const [topCourses,setTopCourses] = useState([])
+ 
+    const getTopCourses = async(req,res,next)=>{
+       try{
+          const response = await api.get('/analytics/courses')
+      
+          if(response){
+            console.log(response.data.topCourses);
+            setTopCourses(response.data.topCourses)
+          }
+      
+     }catch(err){
+        console.log(err)
+      }
+  }
+
+  useEffect(()=>{
+    getTopCourses()
+  },[])
 
   return (
     <div className="top-professional-courses-chart-card">
@@ -28,20 +42,20 @@ const TopProfessionalCoursesChart = ({ data }) => {
       <div className="top-professional-courses-chart-wrapper">
         <ResponsiveContainer width="100%" height={300}>
           <BarChart
-            data={chartData}
+            data={topCourses}
             layout="vertical"
             margin={{ top: 10, right: 20, left: 30, bottom: 10 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis type="number" />
             <YAxis
-              dataKey="course"
+              dataKey="name"
               type="category"
               width={150}
             />
             <Tooltip />
             <Legend />
-            <Bar dataKey="count" fill="#3B82F6" radius={[0, 8, 8, 0]} />
+            <Bar dataKey="value" fill="#3B82F6" radius={[0, 8, 8, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>

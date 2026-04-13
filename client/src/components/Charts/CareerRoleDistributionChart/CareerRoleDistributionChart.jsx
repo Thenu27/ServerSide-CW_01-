@@ -7,17 +7,32 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import "./CareerRoleDistributionChart.css";
+import api from '../../Api/Api'
+import { useEffect,useState } from "react";
 
 const CareerRoleDistributionChart = ({ data }) => {
-  const dummyData = [
-    { name: "Software Engineer", value: 32 },
-    { name: "Data Analyst", value: 18 },
-    { name: "Project Manager", value: 12 },
-    { name: "UI/UX Designer", value: 10 },
-    { name: "Lecturer", value: 8 },
-  ];
 
-  const chartData = data && data.length > 0 ? data : dummyData;
+
+  const [careerNames,setCareerNames] = useState([]);
+
+  const getCareer = async(req,res,next)=>{
+
+    try{
+      const response = await api.get('/analytics/job-title')
+
+      if(response){
+        console.log(response)
+        setCareerNames(response.data.jobTitle)
+      }
+    }catch(err){
+      console.log(err)
+    }
+  }
+
+  useEffect(()=>{
+    getCareer()
+  },[])
+
   const COLORS = ["#3B82F6", "#10B981", "#F59E0B", "#8B5CF6", "#EF4444"];
 
   return (
@@ -28,7 +43,7 @@ const CareerRoleDistributionChart = ({ data }) => {
         <ResponsiveContainer width="100%" height={300}>
           <PieChart>
             <Pie
-              data={chartData}
+              data={careerNames}
               dataKey="value"
               nameKey="name"
               cx="50%"
@@ -37,7 +52,7 @@ const CareerRoleDistributionChart = ({ data }) => {
               outerRadius={100}
               paddingAngle={3}
             >
-              {chartData.map((entry, index) => (
+              {careerNames.map((entry, index) => (
                 <Cell
                   key={`cell-${index}`}
                   fill={COLORS[index % COLORS.length]}

@@ -9,17 +9,30 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import "./GraduationYearChart.css";
+import api from '../../Api/Api'
+import { useEffect, useState } from "react";
 
 const GraduationYearChart = ({ data }) => {
-  const dummyData = [
-    { year: "2021", alumni: 18 },
-    { year: "2022", alumni: 28 },
-    { year: "2023", alumni: 35 },
-    { year: "2024", alumni: 24 },
-    { year: "2025", alumni: 15 },
-  ];
 
-  const chartData = data && data.length > 0 ? data : dummyData;
+  const [degreeYears,setDegreeYears] = useState([])
+
+  const getDegreeYear = async(req,res,next)=>{
+    try{
+        const response = await api.get('/analytics/degree-year')
+        if(response){
+          console.log(response.data.degreeYear)
+          setDegreeYears(response.data.degreeYear)
+        }
+      
+    }catch(err){
+      console.log(err)
+    }
+  }
+
+  useEffect(()=>{
+    getDegreeYear()
+  },[])
+
 
   return (
     <div className="graduation-chart-card">
@@ -27,13 +40,13 @@ const GraduationYearChart = ({ data }) => {
 
       <div className="graduation-chart-wrapper">
         <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={chartData}>
+          <BarChart data={degreeYears}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="year" />
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey="alumni" radius={[8, 8, 0, 0]} />
+            <Bar dataKey="value" radius={[8, 8, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>

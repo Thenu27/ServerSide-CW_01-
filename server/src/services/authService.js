@@ -68,12 +68,12 @@ class AuthService{
 
         const verificationToken = await this.createEmailVerificationToken(user.id);
 
-        const verificationLink = `http://localhost:3000/auth/verify-email?token=${verificationToken}`;
+        // const verificationLink = `http://localhost:3000/auth/verify-email?token=${verificationToken}`;
 
-        await this.notificationService.sendEmailVerification({
-            to: user.email,
-            link: verificationLink
-        });
+        // await this.notificationService.sendEmailVerification({
+        //     to: user.email,
+        //     link: verificationLink
+        // });
 
         console.log("verificationToken:",verificationToken)
 
