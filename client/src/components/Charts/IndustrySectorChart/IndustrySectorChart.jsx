@@ -7,8 +7,34 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import "./IndustrySectorChart.css";
+import api from "../../Api/Api";
+import { useEffect, useState } from "react";
+
+
 
 const IndustrySectorChart = ({ data }) => {
+
+  const [industryData,setIndustryData] = useState(null)
+
+  const getIndustryData = async()=>{
+    try{
+      const response = await api.get('/analytics/industry');
+      
+      if(response){
+        console.log(response.data.industryCount);
+        setIndustryData(response.data.industryCount)
+      }
+
+    }catch(err){
+      console.log(err)
+    }
+  }
+
+  useEffect(()=>{
+    getIndustryData()
+  },[])
+
+
   const dummyData = [
     { name: "IT", value: 45 },
     { name: "Finance", value: 20 },

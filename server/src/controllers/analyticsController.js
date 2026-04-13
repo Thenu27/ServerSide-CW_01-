@@ -9,7 +9,6 @@ class AnalyticsController {
    getSummary = async(req,res,next)=>{
     try{
         const summary = await this.analyticsService.summary();
-        console.log("hit")
         res.status(200).json({
             summary,
             msg:"Summary Retrieved Succesfully"
@@ -19,6 +18,22 @@ class AnalyticsController {
     }
 
    }    
+
+   getIndustryCount = async(req,res,next)=>{
+    try{
+        const industryCount = await this.analyticsService.getIndustryCount();
+        console.log('hit')
+        res.status(200).json({
+            industryCount,
+            msg:"IndustryCount Retrieved Succesfully"
+        })
+
+    }catch(err){
+        next(err)
+    }
+   }
+
+
 }
 
 module.exports = { AnalyticsController };
