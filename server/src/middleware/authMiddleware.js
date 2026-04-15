@@ -13,6 +13,7 @@ class AuthMiddleware{
             }
 
             const token = authHeader.split(" ")[1];
+            console.log("Auth Token:",token)
             const decoded = verifyAccessToken(token);
 
             req.user = decoded;

@@ -28,10 +28,18 @@ class AuthController{
             const {email,password} = req.body;
             const result = await this.authService.loginUser(email,password);
 
+            res.cookie("refreshToken",result.refreshToken,{
+                httpOnly : true,
+                secure: false, // true in production with HTTPS
+                sameSite: "lax",
+                maxAge: 7 * 24 * 60 * 60 * 1000,
+            })
+
+
             res.status(200).json({
                 status:"success",
                 message : "Logged in Succesfully",
-                result
+                accessToken : result.accessToken
             })
         }catch(err){
             next(err)
@@ -74,24 +82,24 @@ class AuthController{
         }
     }
 
-    verifyEmail =async(req,res,next)=>{
-        try{
-            const {token} = req.body;
-            const result = await this.authService.verifyEmail(token)
+    verifyEmail = async (req, res, next) => {
+        try {
+            const { token } = req.query;
+            console.log("VerifyEmuiak")
+            await this.authService.verifyEmail(token);
 
-            return res.status(200).json({
-                status :'success',
-                message : result.message
-            })
-        }catch(err){
-            next(err)
+            return res.redirect("http://localhost:5173/verify-success");
+
+        } catch (err) {
+            console.log(err);
+            return res.redirect("http://localhost:5173/verify-error");
         }
-    }
+    };
 
     forgotPassword = async (req, res, next) => {
         try {
             const { email } = req.body;
-
+            console.log("forgot password hit")
             const result = await this.authService.forgotPassword(email);
 
             return res.status(200).json({
@@ -105,6 +113,7 @@ class AuthController{
 
     resetPassword = async (req, res, next) => {
         try {
+            console.log("Reset Password")
             const { token, newPassword } = req.body;
 
             const result = await this.authService.resetPassword(token, newPassword);

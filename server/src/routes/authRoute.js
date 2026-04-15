@@ -5,7 +5,6 @@ const authRouter = express.Router();
 
 const authController = new AuthController();
 
-
 /**
  * @swagger
  * /auth/register:
@@ -142,7 +141,7 @@ authRouter.post('/logout', AuthMiddleware.requireAuth, authController.logout);
  *       400:
  *         description: Verification token is required, invalid, already used, or expired
  */
-authRouter.post('/verify-email',authController.verifyEmail);
+authRouter.get('/verify-email',authController.verifyEmail);
 
 /**
  * @swagger
