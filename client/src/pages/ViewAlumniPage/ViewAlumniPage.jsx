@@ -39,27 +39,27 @@ const ViewAlumniPage = () => {
 
   const { loading, accessToken } = useContext(AuthContext);
 
-const getProfile = async () => {
-  try {
-    const response = await api.get("/profile/view-alumni");
-    console.log("response:", response);
+  const getProfile = async () => {
+    try {
+      const response = await api.get("/profile/view-alumni");
+      console.log("response:", response);
 
-    const rawProfiles = response.data.profiles.profiles || [];
+      const rawProfiles = response.data.profiles.profiles || [];
 
-    const mappedProfiles = rawProfiles.map((profile) => ({
-      id: profile.id,
-      name: profile.fullName,
-      programme: profile.degrees?.[0]?.degreeName || "N/A",
-      gradYear: profile.degrees?.[0]?.year || "N/A",
-      industry: profile.employmentHistory?.[0]?.industrySector || "N/A",
-      role: profile.employmentHistory?.[0]?.jobTitle || "N/A",
-    }));
+      const mappedProfiles = rawProfiles.map((profile) => ({
+        id: profile.id,
+        name: profile.fullName,
+        programme: profile.degrees?.[0]?.degreeName || "N/A",
+        gradYear: profile.degrees?.[0]?.year || "N/A",
+        industry: profile.employmentHistory?.[0]?.industrySector || "N/A",
+        role: profile.employmentHistory?.[0]?.jobTitle || "N/A",
+      }));
 
-    setAlumni(mappedProfiles);
-  } catch (err) {
-    console.log(err);
-  }
-};
+      setAlumni(mappedProfiles);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   useEffect(() => {
     if (!loading && accessToken) {
@@ -105,6 +105,47 @@ const getProfile = async () => {
     setSearch("");
   };
 
+  const exportToCSV = () => {
+    const rows = filtered.map((item) => ({
+      "Full Name": item.name,
+      Programme: item.programme,
+      "Graduation Year": item.gradYear,
+      Industry: item.industry,
+      "Current Role": item.role,
+    }));
+
+    if (rows.length === 0) {
+      alert("No data to export.");
+      return;
+    }
+
+    const headers = Object.keys(rows[0]);
+    const csvContent = [
+      headers.join(","),
+      ...rows.map((row) =>
+        headers
+          .map((header) => `"${String(row[header]).replace(/"/g, '""')}"`)
+          .join(",")
+      ),
+    ].join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "alumni-report.csv";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    URL.revokeObjectURL(url);
+  };
+
+  const exportToPDF = () => {
+    window.print();
+  };
+
   if (loading) return "Loading...";
 
   return (
@@ -130,7 +171,11 @@ const getProfile = async () => {
         <div className="stat-card">
           <div className="stat-label">Grad years</div>
           <div className="stat-value">
-            {alumni.length > 0 ? `${Math.min(...alumni.map((a) => a.gradYear))}–${Math.max(...alumni.map((a) => a.gradYear))}` : "N/A"}
+            {alumni.length > 0
+              ? `${Math.min(...alumni.map((a) => a.gradYear))}–${Math.max(
+                  ...alumni.map((a) => a.gradYear)
+                )}`
+              : "N/A"}
           </div>
         </div>
       </div>
@@ -175,6 +220,14 @@ const getProfile = async () => {
 
         <button className="btn-reset" onClick={handleReset}>
           Reset
+        </button>
+
+        <button className="btn-export" onClick={exportToCSV}>
+          Export Filtered CSV
+        </button>
+
+        <button className="btn-export" onClick={exportToPDF}>
+          Export Filtered PDF
         </button>
       </div>
 

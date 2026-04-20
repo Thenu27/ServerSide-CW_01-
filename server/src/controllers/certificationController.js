@@ -87,6 +87,20 @@ class CertificationController{
     };
 
 
+    getAllCertifcations = async(req,res,next)=>{
+        try{
+            const result = await this.certificationService.getAllCertifications();
+            res.status(200).json({
+                status: "success",
+                message: "Retreived All Certification successfully",
+                allCert: result.allCert
+            });
+        }catch(err){
+            console.log(err)
+        }
+    }
+
+
 }
 
 module.exports={CertificationController}

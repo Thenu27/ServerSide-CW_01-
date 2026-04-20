@@ -181,6 +181,26 @@ class CertificationService{
     };
 
 
+getAllCertifications = async () => {
+  console.log("Certification hit");
+
+  const groupedCertifications = await prisma.certification.groupBy({
+    by: ["name"], // group by certification name
+    _count: {
+      name: true
+    },
+    orderBy: {
+      _count: {
+        name: "desc" // most → least
+      }
+    }
+  });
+
+  return {
+    allCert: groupedCertifications
+  };
+};
+
 
 
 }

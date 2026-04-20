@@ -1,0 +1,147 @@
+.dashboard-alumni-preview {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px;
+  margin-top: 24px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+.dashboard-alumni-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.dashboard-alumni-header h2 {
+  margin: 0;
+  font-size: 20px;
+  color: #0f172a;
+}
+
+.dashboard-alumni-header p {
+  margin: 4px 0 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.view-all-btn {
+  border: none;
+  background: #2563eb;
+  color: white;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.view-all-btn:hover {
+  opacity: 0.92;
+}
+
+.dashboard-alumni-table-wrap {
+  overflow-x: auto;
+}
+
+.dashboard-alumni-table-wrap table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.dashboard-alumni-table-wrap th,
+.dashboard-alumni-table-wrap td {
+  padding: 14px 12px;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.td-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: white;
+  font-size: 13px;
+}
+
+.name-text {
+  font-weight: 500;
+  color: #0f172a;
+}
+
+.badge {
+  display: inline-block;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge-it {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.badge-finance {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.badge-marketing {
+  background: #fce7f3;
+  color: #be185d;
+}
+
+.badge-healthcare {
+  background: #ede9fe;
+  color: #7c3aed;
+}
+
+.badge-education {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.badge-default {
+  background: #e2e8f0;
+  color: #334155;
+}
+
+.avatar-blue {
+  background: #3b82f6;
+}
+
+.avatar-teal {
+  background: #14b8a6;
+}
+
+.avatar-pink {
+  background: #ec4899;
+}
+
+.avatar-amber {
+  background: #f59e0b;
+}
+
+.avatar-purple {
+  background: #8b5cf6;
+}
+
+.avatar-green {
+  background: #22c55e;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 20px;
+  color: #64748b;
+}

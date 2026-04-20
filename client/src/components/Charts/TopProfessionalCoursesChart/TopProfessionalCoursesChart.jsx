@@ -9,37 +9,56 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import "./TopProfessionalCoursesChart.css";
-import api from '../../Api/Api'
-import { useEffect, useState } from "react";
-
+import api from "../../Api/Api";
+import { useEffect, useState, useRef } from "react";
+import * as htmlToImage from "html-to-image";
 
 const TopProfessionalCoursesChart = ({ data }) => {
+  const [topCourses, setTopCourses] = useState([]);
+  const chartRef = useRef();
 
-  const [topCourses,setTopCourses] = useState([])
- 
-    const getTopCourses = async(req,res,next)=>{
-       try{
-          const response = await api.get('/analytics/courses')
-      
-          if(response){
-            console.log(response.data.topCourses);
-            setTopCourses(response.data.topCourses)
-          }
-      
-     }catch(err){
-        console.log(err)
+  const getTopCourses = async () => {
+    try {
+      const response = await api.get("/analytics/courses");
+
+      if (response) {
+        console.log(response.data.topCourses);
+        setTopCourses(response.data.topCourses || []);
       }
-  }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-  useEffect(()=>{
-    getTopCourses()
-  },[])
+  useEffect(() => {
+    getTopCourses();
+  }, []);
+
+  const downloadChart = async () => {
+    if (!chartRef.current) return;
+
+    try {
+      const dataUrl = await htmlToImage.toPng(chartRef.current);
+
+      const link = document.createElement("a");
+      link.download = "top-professional-courses.png";
+      link.href = dataUrl;
+      link.click();
+    } catch (err) {
+      console.log("Error downloading chart:", err);
+    }
+  };
 
   return (
     <div className="top-professional-courses-chart-card">
-      <h3>Top Professional Courses</h3>
+      <div className="chart-header">
+        <h3>Top Professional Courses</h3>
+        <button onClick={downloadChart} className="btn-download">
+          Download Image
+        </button>
+      </div>
 
-      <div className="top-professional-courses-chart-wrapper">
+      <div className="top-professional-courses-chart-wrapper" ref={chartRef}>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart
             data={topCourses}
@@ -48,11 +67,7 @@ const TopProfessionalCoursesChart = ({ data }) => {
           >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis type="number" />
-            <YAxis
-              dataKey="name"
-              type="category"
-              width={150}
-            />
+            <YAxis dataKey="name" type="category" width={150} />
             <Tooltip />
             <Legend />
             <Bar dataKey="value" fill="#3B82F6" radius={[0, 8, 8, 0]} />

@@ -8,21 +8,26 @@ import VerifySuccess from './pages/VerifySuccess/VerifySuccess'
 import VerifyError from './pages/VerifyError/VerifyError'
 import ResetPasswordPage from './pages/ResetPasswordPage/ResetPasswordPage'
 import ForgotPasswordPage from './pages/ForgotPasswordPage/ForgotPasswordPage'
+import Sidebar from './components/Sidebar/Sidebar'
+import ReportPage from './pages/ReportPage/ReportPage'
+import ChartSection from './components/ChartSection/ChartSection'
 
 function App() {
 
   return (
     <div className='app'>
+      <Sidebar/>
       <Routes>
-        <Route path="/register" element={<RegisterPage/>} />
-        <Route path="/verify-success" element={<VerifySuccess/>}/>
-        <Route path="/verify-error" element={<VerifyError/>}/>
-        <Route path="/login" element={<LoginPage/>} />
-        <Route path="/dashboard" element={<DashboardPage/>}/>
-        <Route path="/forgot-password" element={<ForgotPasswordPage/>}/>
-        <Route path="/reset-password" element={<ResetPasswordPage/>}/>
-        <Route path="/view-alumni" element={<ViewAlumniPage/>}/>
-       
+          <Route path="/register" element={<RegisterPage/>} />
+          <Route path="/verify-success" element={<VerifySuccess/>}/>
+          <Route path="/verify-error" element={<VerifyError/>}/>
+          <Route path="/login" element={<LoginPage/>} />
+          <Route path="/dashboard" element={<DashboardPage/>}/>
+          <Route path="/forgot-password" element={<ForgotPasswordPage/>}/>
+          <Route path="/reset-password" element={<ResetPasswordPage/>}/>
+          <Route path="/view-alumni" element={<ViewAlumniPage/>}/>    
+          <Route path="/report" element={<ReportPage/>}/>
+          <Route path="/view-analytics" element={<ChartSection/>}/>
       </Routes>
       {/* <RegisterPage/> */}
       {/* <ViewAlumniPage/> */}

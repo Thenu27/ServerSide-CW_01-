@@ -8,32 +8,29 @@ import {
 } from "recharts";
 import "./IndustrySectorChart.css";
 import api from "../../Api/Api";
-import { useEffect, useState } from "react";
-
-
+import { useEffect, useState, useRef } from "react";
+import * as htmlToImage from "html-to-image";
 
 const IndustrySectorChart = ({ data }) => {
+  const [industryData, setIndustryData] = useState([]);
+  const chartRef = useRef();
 
-  const [industryData,setIndustryData] = useState(null)
+  const getIndustryData = async () => {
+    try {
+      const response = await api.get("/analytics/industry");
 
-  const getIndustryData = async()=>{
-    try{
-      const response = await api.get('/analytics/industry');
-      
-      if(response){
+      if (response) {
         console.log(response.data.industryCount);
-        setIndustryData(response.data.industryCount)
+        setIndustryData(response.data.industryCount || []);
       }
-
-    }catch(err){
-      console.log(err)
+    } catch (err) {
+      console.log(err);
     }
-  }
+  };
 
-  useEffect(()=>{
-    getIndustryData()
-  },[])
-
+  useEffect(() => {
+    getIndustryData();
+  }, []);
 
   const dummyData = [
     { name: "IT", value: 45 },
@@ -43,7 +40,8 @@ const IndustrySectorChart = ({ data }) => {
     { name: "Healthcare", value: 10 },
   ];
 
-  const chartData = data && data.length > 0 ? data : dummyData;
+  const chartData =
+    industryData && industryData.length > 0 ? industryData : dummyData;
 
   const COLORS = [
     "#4F46E5",
@@ -54,15 +52,35 @@ const IndustrySectorChart = ({ data }) => {
     "#8B5CF6",
   ];
 
+  const downloadChart = async () => {
+    if (!chartRef.current) return;
+
+    try {
+      const dataUrl = await htmlToImage.toPng(chartRef.current);
+
+      const link = document.createElement("a");
+      link.download = "industry-chart.png";
+      link.href = dataUrl;
+      link.click();
+    } catch (err) {
+      console.log("Error downloading chart:", err);
+    }
+  };
+
   return (
     <div className="industry-chart-card">
-      <h3>Alumni by Industry Sector</h3>
+      <div className="chart-header">
+        <h3>Alumni by Industry Sector</h3>
+        <button onClick={downloadChart} className="btn-download">
+          Download Image
+        </button>
+      </div>
 
-      <div className="industry-chart-wrapper">
+      <div className="industry-chart-wrapper" ref={chartRef}>
         <ResponsiveContainer width="100%" height={300}>
           <PieChart>
             <Pie
-              data={industryData}
+              data={chartData}
               dataKey="value"
               nameKey="name"
               cx="50%"

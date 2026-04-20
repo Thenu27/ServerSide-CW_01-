@@ -19,6 +19,7 @@ const cookieParser = require('cookie-parser')
 const cors = require('cors');
 const { analyticsRoute } = require('./routes/analyticsRoute.js');
 const { viewAlumniRoute } = require('./routes/viewAlumniRoute.js');
+const insightsRouter = require('./routes/insightsRoute.js');
 
 const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, 
@@ -56,6 +57,7 @@ app.use('/api',apiRouter);
 
 // app.use('/view-alumni',viewAlumniRoute)
 app.use('/analytics',analyticsRoute)
+app.use('/key-insights',insightsRouter)
 
 app.use(ErrorMiddleware.handle);
 

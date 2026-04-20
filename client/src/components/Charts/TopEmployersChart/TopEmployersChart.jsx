@@ -9,58 +9,69 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-
 import "./TopEmployersChart.css";
-import api from '../../Api/Api'
-import { useEffect, useState } from "react";
+import api from "../../Api/Api";
+import { useEffect, useState, useRef } from "react";
+import * as htmlToImage from "html-to-image";
 
 const TopEmployersChart = ({ data }) => {
+  const [topEmployers, setTopEmployers] = useState([]);
+  const chartRef = useRef();
 
-  const [topEmployers,setTopEmployers] = useState([])
+  const getEmployers = async () => {
+    try {
+      const response = await api.get("/analytics/employer"); // ⚠️ fixed missing "/"
 
-  const getEmployers=async()=>{
-    try{
-      const response = await api.get('analytics/employer');
-
-      if(response){
-        console.log(response.data.topEmployers)
-        setTopEmployers(response.data.topEmployers)
+      if (response) {
+        console.log(response.data.topEmployers);
+        setTopEmployers(response.data.topEmployers || []);
       }
-        
-    }catch(err){
-      console.log(err)
+    } catch (err) {
+      console.log(err);
     }
+  };
 
-  }
+  useEffect(() => {
+    getEmployers();
+  }, []);
 
-  useEffect(()=>{
-    getEmployers()
-  },[])
+  const downloadChart = async () => {
+    if (!chartRef.current) return;
+
+    try {
+      const dataUrl = await htmlToImage.toPng(chartRef.current);
+
+      const link = document.createElement("a");
+      link.download = "top-employers-chart.png";
+      link.href = dataUrl;
+      link.click();
+    } catch (err) {
+      console.log("Error downloading chart:", err);
+    }
+  };
 
   return (
     <div className="top-employers-chart-card">
-      <h3>Top Employers</h3>
+      <div className="chart-header">
+        <h3>Top Employers</h3>
+        <button onClick={downloadChart} className="btn-download">
+          Download Image
+        </button>
+      </div>
 
-      <div className="top-employers-chart-wrapper">
+      {/* 👇 wrap chart */}
+      <div className="top-employers-chart-wrapper" ref={chartRef}>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart
             data={topEmployers}
-            layout="vertical"   
+            layout="vertical"
             margin={{ top: 10, right: 20, left: 40, bottom: 10 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
-
             <XAxis type="number" />
-
-            <YAxis
-              dataKey="name"
-              type="category"
-              width={120}
-            />
-
+            <YAxis dataKey="name" type="category" width={120} />
             <Tooltip />
             <Legend />
-
             <Bar
               dataKey="value"
               fill="#3B82F6"

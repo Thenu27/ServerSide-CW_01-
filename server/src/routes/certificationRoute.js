@@ -43,7 +43,6 @@ const certificationController = new CertificationController();
  *         description: Profile not found
  */
 certificationRouter.post('/',AuthMiddleware.requireAuth,certificationController.addCertification);
-
 /**
  * @swagger
  * /certification:
@@ -61,7 +60,6 @@ certificationRouter.post('/',AuthMiddleware.requireAuth,certificationController.
  *         description: Profile not found
  */
 certificationRouter.get('/',AuthMiddleware.requireAuth,certificationController.getCertification);
-
 /**
  * @swagger
  * /certification/{id}:
@@ -134,5 +132,7 @@ certificationRouter.delete('/:id',AuthMiddleware.requireAuth,certificationContro
  *         description: Certification or profile not found
  */
 certificationRouter.put('/:id', AuthMiddleware.requireAuth, certificationController.updateCertification);
+
+certificationRouter.get('/all',AuthMiddleware.requireAuth,certificationController.getAllCertifcations)
 
 module.exports={certificationRouter}

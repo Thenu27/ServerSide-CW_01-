@@ -9,44 +9,55 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import "./SkillsGapEmergingTrendsChart.css";
-import api from '../../Api/Api'
-import { useEffect } from "react";
-import { useState } from "react";
+import api from "../../Api/Api";
+import { useEffect, useState, useRef } from "react";
+import * as htmlToImage from "html-to-image";
 
 const SkillsGapEmergingTrendsChart = ({ data }) => {
-  const dummyData = [
-    { skill: "Docker", count: 26 },
-    { skill: "AWS", count: 22 },
-    { skill: "Kubernetes", count: 18 },
-    { skill: "Tableau", count: 14 },
-    { skill: "Scrum", count: 12 },
-  ];
+  const [skillGaps, setSkillGaps] = useState([]);
+  const chartRef = useRef();
 
-  const chartData = data && data.length > 0 ? data : dummyData;
-
-  const [skillGaps,setSkillGaps] = useState([]);
-
-  const getSkillGaps = async()=>{
-    try{
-      const response = await api.get('/analytics/skill-gaps')
-      if(response){
-        console.log("skillgaps:",response.data.skillGaps);
-        setSkillGaps(response.data.skillGaps)
+  const getSkillGaps = async () => {
+    try {
+      const response = await api.get("/analytics/skill-gaps");
+      if (response) {
+        console.log("skillgaps:", response.data.skillGaps);
+        setSkillGaps(response.data.skillGaps || []);
       }
-    }catch(err){
-      console.log(err)
+    } catch (err) {
+      console.log(err);
     }
-  }
+  };
 
-  useEffect(()=>{
-    getSkillGaps()
-  },[])
+  useEffect(() => {
+    getSkillGaps();
+  }, []);
+
+  const downloadChart = async () => {
+    if (!chartRef.current) return;
+
+    try {
+      const dataUrl = await htmlToImage.toPng(chartRef.current);
+
+      const link = document.createElement("a");
+      link.download = "skills-gap-chart.png";
+      link.href = dataUrl;
+      link.click();
+    } catch (err) {
+      console.log("Error downloading chart:", err);
+    }
+  };
 
   return (
     <div className="skills-gap-chart-card">
-      <h3>Skills Gap / Emerging Trends</h3>
+      <div className="chart-header">
+        <h3>Skills Gap / Emerging Trends</h3>
+        <button onClick={downloadChart} className="btn-download">
+          Download Image
+        </button>
+      </div>
 
-      <div className="skills-gap-chart-wrapper">
+      <div className="skills-gap-chart-wrapper" ref={chartRef}>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart
             data={skillGaps}
@@ -55,11 +66,7 @@ const SkillsGapEmergingTrendsChart = ({ data }) => {
           >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis type="number" />
-            <YAxis
-              dataKey="name"
-              type="category"
-              width={140}
-            />
+            <YAxis dataKey="name" type="category" width={140} />
             <Tooltip />
             <Legend />
             <Bar dataKey="value" fill="#10B981" radius={[0, 8, 8, 0]} />
