@@ -115,4 +115,6 @@ profileRouter.put('/',AuthMiddleware.requireAuth,profileController.updateProfile
  */
 profileRouter.delete('/', AuthMiddleware.requireAuth, profileController.deleteProfile);
 
+profileRouter.get('/view-alumni',AuthMiddleware.requireAuth,profileController.getAllProfiles);
+
 module.exports={profileRouter}; 

@@ -87,6 +87,19 @@ class ProfileController{
     };
 
 
+    getAllProfiles = async(req,res,next)=>{
+        try{
+            const profiles = await this.profileService.getAllProfiles();
+            
+            return res.status(200).json({
+                status: "success",                
+                profiles
+            });
+            
+        }catch(err){
+            next(err)
+        }
+    }
 
 
 }

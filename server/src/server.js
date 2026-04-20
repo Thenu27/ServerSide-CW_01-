@@ -14,9 +14,11 @@ const {apiRouter} = require("./routes/apiRoute.js");
 const swaggerUi = require('swagger-ui-express')
 const {swaggerSpec} = require('./config/swagger.js')
 const { rateLimit } = require("express-rate-limit");
+const cookieParser = require('cookie-parser')
 
 const cors = require('cors');
 const { analyticsRoute } = require('./routes/analyticsRoute.js');
+const { viewAlumniRoute } = require('./routes/viewAlumniRoute.js');
 
 const globalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, 
@@ -35,6 +37,7 @@ app.use(cors({
   credentials: true
 }));
 app.use(globalLimiter);
+app.use(cookieParser());
 app.use(express.json());
 
 require('./scheduler/winnerScheduler.js')
@@ -51,6 +54,7 @@ app.use('/course',courseRouter)
 app.use('/bid',bidRouter);
 app.use('/api',apiRouter);
 
+// app.use('/view-alumni',viewAlumniRoute)
 app.use('/analytics',analyticsRoute)
 
 app.use(ErrorMiddleware.handle);

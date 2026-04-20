@@ -9,6 +9,9 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import "./SkillsGapEmergingTrendsChart.css";
+import api from '../../Api/Api'
+import { useEffect } from "react";
+import { useState } from "react";
 
 const SkillsGapEmergingTrendsChart = ({ data }) => {
   const dummyData = [
@@ -21,6 +24,24 @@ const SkillsGapEmergingTrendsChart = ({ data }) => {
 
   const chartData = data && data.length > 0 ? data : dummyData;
 
+  const [skillGaps,setSkillGaps] = useState([]);
+
+  const getSkillGaps = async()=>{
+    try{
+      const response = await api.get('/analytics/skill-gaps')
+      if(response){
+        console.log("skillgaps:",response.data.skillGaps);
+        setSkillGaps(response.data.skillGaps)
+      }
+    }catch(err){
+      console.log(err)
+    }
+  }
+
+  useEffect(()=>{
+    getSkillGaps()
+  },[])
+
   return (
     <div className="skills-gap-chart-card">
       <h3>Skills Gap / Emerging Trends</h3>
@@ -28,20 +49,20 @@ const SkillsGapEmergingTrendsChart = ({ data }) => {
       <div className="skills-gap-chart-wrapper">
         <ResponsiveContainer width="100%" height={300}>
           <BarChart
-            data={chartData}
+            data={skillGaps}
             layout="vertical"
             margin={{ top: 10, right: 20, left: 30, bottom: 10 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis type="number" />
             <YAxis
-              dataKey="skill"
+              dataKey="name"
               type="category"
               width={140}
             />
             <Tooltip />
             <Legend />
-            <Bar dataKey="count" fill="#10B981" radius={[0, 8, 8, 0]} />
+            <Bar dataKey="value" fill="#10B981" radius={[0, 8, 8, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </div>

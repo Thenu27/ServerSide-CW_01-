@@ -1,5 +1,24 @@
 const { prisma } = require("../config/prisma");
 
+const normalizeSkillName = (name) => {
+  if (!name) return null;
+
+  const value = name.trim().toLowerCase();
+
+  if (value.includes("aws")) return "AWS";
+  if (value.includes("azure")) return "Azure";
+  if (value.includes("gcp") || value.includes("google cloud")) return "GCP";
+  if (value.includes("docker")) return "Docker";
+  if (value.includes("kubernetes")) return "Kubernetes";
+  if (value.includes("scrum") || value.includes("agile")) return "Agile / Scrum";
+  if (value.includes("python")) return "Python";
+  if (value.includes("sql")) return "SQL";
+  if (value.includes("tableau")) return "Tableau";
+  if (value.includes("power bi")) return "Power BI";
+
+  return name.trim();
+};
+
 class AnalyticsService {
   summary = async () => {
     const totalAlumni = await prisma.profile.count();
@@ -207,8 +226,62 @@ class AnalyticsService {
     return jobTitle;
   };
 
+  
 
+  getSkillGaps = async () => {
+    const profiles = await prisma.profile.findMany({
+      include: {
+        degrees: true,
+        certifications: true,
+        courses: true,
+        licences: true
+      }
+    });
 
+    const skillMaps = {};
+
+    for (const profile of profiles) {
+      if (!profile.degrees || profile.degrees.length === 0) {
+        continue;
+      }
+
+      const gradYear = profile.degrees[0].year;
+      const skills = new Set();
+
+      for (const cert of profile.certifications) {
+        if (cert.year > gradYear && cert.name) {
+          skills.add(normalizeSkillName(cert.name));
+        }
+      }
+
+      for (const course of profile.courses) {
+        if (course.year > gradYear && course.name) {
+          skills.add(normalizeSkillName(course.name));
+        }
+      }
+
+      for (const licence of profile.licences) {
+        if (licence.year > gradYear && licence.name) {
+          skills.add(normalizeSkillName(licence.name));
+        }
+      }
+
+      for (const skill of skills) {
+        if (!skill) continue;
+
+        if (!skillMaps[skill]) {
+          skillMaps[skill] = 0;
+        }
+
+        skillMaps[skill] += 1;
+      }
+    }
+
+    return Object.entries(skillMaps)
+      .map(([name, value]) => ({ name, value }))
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 10);
+  };
 
 }
 

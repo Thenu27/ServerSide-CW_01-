@@ -116,6 +116,20 @@ class AnalyticsController {
         next(err)
     }
    }  
+
+    getSkillGaps = async (req, res, next) => {
+        try {
+            console.log("skill hit")
+        const skillGaps = await this.analyticsService.getSkillGaps();
+        res.status(200).json({
+            skillGaps,
+            msg:"skillGaps Retrieved Succesfully"
+        });
+        } catch (error) {
+        next(error);
+        }
+    };
+
 }
 
 module.exports = { AnalyticsController };

@@ -134,7 +134,25 @@ class ProfileService{
     };
 
 
+    getAllProfiles = async()=>{
+        const profiles = await prisma.profile.findMany({
+            include:{
+                degrees:true,
+                employmentHistory:true
+            }
+        });
 
+        if (!profiles) {
+            const error = new Error("No Profile found!");
+            error.statusCode = 404;
+            throw error;
+        }
+
+        return{
+            profiles
+        }
+
+    }
 
 
 }
