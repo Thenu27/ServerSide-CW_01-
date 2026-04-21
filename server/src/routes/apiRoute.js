@@ -1,18 +1,19 @@
 const { ApiController } = require('../controllers/apiController');
 const { BidController } = require('../controllers/bidController');
-const { AdminMiddleware } = require('../middleware/adminMiddleware');
 const { ApiKeyMiddleware } = require('../middleware/apiKeyMiddleware');
 const { AuthMiddleware } = require('../middleware/authMiddleware');
+const { requireScope } = require('../middleware/requireScope');
 
 const apiRouter = require('express').Router();
 
-const apiController = new ApiController()
-const bidController = new BidController()
+const apiController = new ApiController();
+const bidController = new BidController();
+
 /**
  * @swagger
- * /api/client:
+ * /api/client/dashboard:
  *   post:
- *     summary: Create a new API client key
+ *     summary: Create a new Dashboard API client key
  *     tags: [API Client]
  *     security:
  *       - bearerAuth: []
@@ -27,32 +28,51 @@ const bidController = new BidController()
  *             properties:
  *               name:
  *                 type: string
- *                 example: Mobile App Client
+ *                 example: Dashboard Client
  *     responses:
  *       201:
- *         description: API key created successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: API key created
- *                 apiKey:
- *                   type: string
- *                   example: 4f8c8e7c9a9d2c1b6e7f123456789abcdeffedcba1234567890abcdef123456
+ *         description: Dashboard API key created successfully
  *       400:
  *         description: Invalid input
  *       401:
  *         description: Unauthorized
  */
-apiRouter.post('/client',AuthMiddleware.requireAuth,apiController.createClient);
+apiRouter.post('/client/dashboard',AuthMiddleware.requireAuth,apiController.createDashboardClient);
+/**
+ * @swagger
+ * /api/client/ar:
+ *   post:
+ *     summary: Create a new Mobile AR App API client key
+ *     tags: [API Client]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: AR App Client
+ *     responses:
+ *       201:
+ *         description: AR app API key created successfully
+ *       400:
+ *         description: Invalid input
+ *       401:
+ *         description: Unauthorized
+ */
+apiRouter.post('/client/ar',AuthMiddleware.requireAuth,apiController.createArClient);
+
 /**
  * @swagger
  * /api/winner:
  *   get:
- *     summary: Get today's featured alumnus (Public API)
+ *     summary: Get today's featured alumnus (AR app API)
  *     tags: [Public API]
  *     parameters:
  *       - in: header
@@ -66,8 +86,8 @@ apiRouter.post('/client',AuthMiddleware.requireAuth,apiController.createClient);
  *       401:
  *         description: API key required
  *       403:
- *         description: Invalid API key
+ *         description: Invalid API key or insufficient permission
  */
-apiRouter.get('/winner',ApiKeyMiddleware.requireApiKey,bidController.getWinnerPublic);
+apiRouter.get('/winner',ApiKeyMiddleware.requireApiKey,requireScope('read:alumni_of_day'),bidController.getWinnerPublic);
 
-module.exports={apiRouter}
+module.exports = { apiRouter };

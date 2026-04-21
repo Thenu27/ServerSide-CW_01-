@@ -6,7 +6,7 @@ class ApiService {
         return crypto.randomBytes(32).toString("hex");
     };
 
-    createApiKey = async (name, userId) => {
+    createApiKey = async (name, userId, scopes = []) => {
         if (!name) {
             const error = new Error("Client name is required");
             error.statusCode = 400;
@@ -19,13 +19,20 @@ class ApiService {
             throw error;
         }
 
+        if (!Array.isArray(scopes) || scopes.length === 0) {
+            const error = new Error("Scopes are required");
+            error.statusCode = 400;
+            throw error;
+        }
+
         const apiKey = this.generateApiKey();
 
         const client = await prisma.apiClient.create({
             data: {
                 name,
                 apiKey,
-                userId
+                userId,
+                scopes   
             }
         });
 

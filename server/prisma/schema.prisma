@@ -204,7 +204,8 @@ model ApiClient {
   apiKey    String        @unique
   isActive  Boolean       @default(true)
   createdAt DateTime      @default(now())
-
+  scopes    String[]
+  
   userId    String
   user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
