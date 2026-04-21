@@ -32,16 +32,9 @@ const IndustrySectorChart = ({ data }) => {
     getIndustryData();
   }, []);
 
-  const dummyData = [
-    { name: "IT", value: 45 },
-    { name: "Finance", value: 20 },
-    { name: "Marketing", value: 15 },
-    { name: "Education", value: 10 },
-    { name: "Healthcare", value: 10 },
-  ];
 
   const chartData =
-    industryData && industryData.length > 0 ? industryData : dummyData;
+    industryData && industryData.length > 0 ? industryData : [];
 
   const COLORS = [
     "#4F46E5",

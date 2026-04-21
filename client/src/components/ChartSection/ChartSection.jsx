@@ -2,6 +2,7 @@ import AlumniPreviewSection from "../AlumniPreviewSection/AlumniPreviewSection";
 import CareerRoleDistributionChart from "../Charts/CareerRoleDistributionChart/CareerRoleDistributionChart";
 import GraduationYearChart from "../Charts/GraduationYearChart/GraduationYearChart";
 import IndustrySectorChart from "../Charts/IndustrySectorChart/IndustrySectorChart";
+import KeyInsightsChart from "../Charts/KeyInsightsChart/KeyInsightsChart";
 import ProgrammeChart from "../Charts/ProgrammeChart/ProgrammeChart";
 import SkillsGapEmergingTrendsChart from "../Charts/SkillsGapEmergingTrendsChart/SkillsGapEmergingTrendsChart";
 import TopCertificationsChart from "../Charts/TopCertificationsChart/TopCertificationsChart";
@@ -14,7 +15,15 @@ import "./ChartSection.css";
 
 const ChartSection = () => {
   return (
+    <>
+    <div className="dashboard-header">
+      <h1>View Analytics</h1>
+      <p>Detailed analytics and data insights</p>
+    </div>
+    
+
     <div className="charts-section">
+      
         <IndustrySectorChart/>
         <GraduationYearChart/>
         <ProgrammeChart/>
@@ -24,11 +33,13 @@ const ChartSection = () => {
         <TopProfessionalCoursesChart/>
         <SkillsGapEmergingTrendsChart/>
 
-        <ExportReportSection/>
-        <AlumniPreviewSection/>
-        <InsightsPanel/>
+        {/* <ExportReportSection/> */}
+        {/* <AlumniPreviewSection/> */}
+        <KeyInsightsChart/>
+        {/* <InsightsPanel/> */}
         <Sidebar/>
     </div>
+        </>
   );
 };
 

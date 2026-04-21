@@ -20,7 +20,7 @@ const TopEmployersChart = ({ data }) => {
 
   const getEmployers = async () => {
     try {
-      const response = await api.get("/analytics/employer"); // ⚠️ fixed missing "/"
+      const response = await api.get("/analytics/employer"); 
 
       if (response) {
         console.log(response.data.topEmployers);
@@ -59,7 +59,7 @@ const TopEmployersChart = ({ data }) => {
         </button>
       </div>
 
-      {/* 👇 wrap chart */}
+      
       <div className="top-employers-chart-wrapper" ref={chartRef}>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart

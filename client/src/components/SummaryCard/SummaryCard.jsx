@@ -23,7 +23,7 @@ const SummaryCards = () => {
 
   useEffect(()=>{
     getSummary();
-    console.log(summary)
+    // console.log(summary)
   },[])
 
 

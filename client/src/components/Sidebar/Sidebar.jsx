@@ -24,7 +24,7 @@ const Sidebar = () => {
           <div
             onClick={() => {
               navigate("/dashboard");
-              setIsOpen(false); // optional: close after click
+              setIsOpen(false);
             }}
             className={`nav-item ${
               location.pathname === "/dashboard" ? "active" : ""
@@ -47,6 +47,18 @@ const Sidebar = () => {
 
           <div
             onClick={() => {
+              navigate("/view-analytics");   
+              setIsOpen(false);
+            }}
+            className={`nav-item ${
+              location.pathname === "/view-analytics" ? "active" : ""
+            }`}
+          >
+            View Analytics
+          </div>
+
+          <div
+            onClick={() => {
               navigate("/report");
               setIsOpen(false);
             }}
@@ -56,7 +68,6 @@ const Sidebar = () => {
           >
             Reports
           </div>
-                   
         </div>
 
         <div className="logout-btn">Logout</div>
