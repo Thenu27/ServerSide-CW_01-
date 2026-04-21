@@ -3,13 +3,15 @@ import "./KeyInsightsChart.css";
 import api from "../../Api/Api";
 import * as htmlToImage from "html-to-image";
 
-const KeyInsightsChart = () => {
-  const [insights, setInsights] = useState({
-    topIndustry: "",
-    mostCommonCertification: "",
-    mostCommonEmployer: "",
-    emergingSkill: "",
-  });
+const KeyInsightsChart = ({ insights: insightsProp }) => {
+  const [insights, setInsights] = useState(
+    insightsProp || {
+      topIndustry: "",
+      mostCommonCertification: "",
+      mostCommonEmployer: "",
+      emergingSkill: "",
+    }
+  );
 
   const cardRef = useRef();
 
@@ -17,13 +19,13 @@ const KeyInsightsChart = () => {
     try {
       const response = await api.get("/key-insights");
 
-      if (response) {
-        console.log(response.data.insights);
+      if (response?.data?.insights) {
         setInsights({
-          topIndustry: response.data.insights.topIndustry,
-          mostCommonCertification: response.data.insights.mostCommonCertification,
-          mostCommonEmployer: response.data.insights.mostCommonEmployer,
-          emergingSkill: response.data.insights.emergingSkill,
+          topIndustry: response.data.insights.topIndustry || "",
+          mostCommonCertification:
+            response.data.insights.mostCommonCertification || "",
+          mostCommonEmployer: response.data.insights.mostCommonEmployer || "",
+          emergingSkill: response.data.insights.emergingSkill || "",
         });
       }
     } catch (err) {
@@ -32,15 +34,18 @@ const KeyInsightsChart = () => {
   };
 
   useEffect(() => {
-    getInsights();
-  }, []);
+    if (insightsProp) {
+      setInsights(insightsProp);
+    } else {
+      getInsights();
+    }
+  }, [insightsProp]);
 
   const downloadInsights = async () => {
     if (!cardRef.current) return;
 
     try {
       const dataUrl = await htmlToImage.toPng(cardRef.current);
-
       const link = document.createElement("a");
       link.download = "key-insights.png";
       link.href = dataUrl;
@@ -59,7 +64,6 @@ const KeyInsightsChart = () => {
         </button>
       </div>
 
-      {/* 👇 wrap content in ref */}
       <div className="key-insights-grid" ref={cardRef}>
         <div className="insight-box">
           <p className="insight-label">Top Industry</p>
@@ -82,9 +86,7 @@ const KeyInsightsChart = () => {
 
         <div className="insight-box">
           <p className="insight-label">Emerging Skill</p>
-          <h4 className="insight-value">
-            {insights.emergingSkill || "N/A"}
-          </h4>
+          <h4 className="insight-value">{insights.emergingSkill || "N/A"}</h4>
         </div>
       </div>
     </div>

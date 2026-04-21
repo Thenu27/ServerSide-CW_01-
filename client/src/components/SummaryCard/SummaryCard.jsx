@@ -1,37 +1,33 @@
-import { useEffect,useState } from "react";
+import { useEffect, useState } from "react";
 import "./SummaryCard.css";
-import axios from "axios";
 import api from "../Api/Api";
 
-const SummaryCards = () => {
-
-  const [summary, setSummary] = useState(null);
+const SummaryCards = ({ summary: summaryProp }) => {
+  const [summary, setSummary] = useState(summaryProp || null);
 
   const getSummary = async () => {
     try {
       const response = await api.get("/analytics/summary");
-      if(response){
-              console.log("response:",response.data.summary)
-
-       setSummary(response.data.summary)
+      if (response) {
+        setSummary(response.data.summary);
       }
     } catch (error) {
       console.error("Error fetching summary:", error);
-      throw error;
     }
   };
 
-  useEffect(()=>{
-    getSummary();
-    // console.log(summary)
-  },[])
-
+  useEffect(() => {
+    if (summaryProp) {
+      setSummary(summaryProp);
+    } else {
+      getSummary();
+    }
+  }, [summaryProp]);
 
   if (!summary) return <p>Loading...</p>;
-    
+
   return (
     <div className="summary-cards-container">
-      
       <div className="summary-card">
         <h3>Total Alumni</h3>
         <p>{summary.totalAlumni}</p>
@@ -51,7 +47,6 @@ const SummaryCards = () => {
         <h3>Top Certification</h3>
         <p>{summary.topCertification}</p>
       </div>
-
     </div>
   );
 };
