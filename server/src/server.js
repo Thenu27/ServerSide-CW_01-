@@ -14,7 +14,8 @@ const {apiRouter} = require("./routes/apiRoute.js");
 const swaggerUi = require('swagger-ui-express')
 const {swaggerSpec} = require('./config/swagger.js')
 const { rateLimit } = require("express-rate-limit");
-const cookieParser = require('cookie-parser')
+const cookieParser = require('cookie-parser');
+const helmet = require("helmet");
 
 const cors = require('cors');
 const { analyticsRoute } = require('./routes/analyticsRoute.js');
@@ -31,8 +32,10 @@ const globalLimiter = rateLimit({
     message: "Too many requests, please try again later."
   }
 });
+
 const app = express()
 
+app.use(helmet());
 app.use(cors({
   origin: env.frontendUrl, 
   credentials: true
@@ -55,7 +58,6 @@ app.use('/course',courseRouter)
 app.use('/bid',bidRouter);
 app.use('/api',apiRouter);
 
-// app.use('/view-alumni',viewAlumniRoute)
 app.use('/analytics',analyticsRoute)
 app.use('/key-insights',insightsRouter)
 

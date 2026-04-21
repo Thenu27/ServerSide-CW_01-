@@ -1,0 +1,18 @@
+.profile-section {
+  border: 1px solid #ececec;
+  border-radius: 12px;
+  padding: 1rem;
+  background: #fafafa;
+}
+
+.profile-section h3 {
+  font-size: 16px;
+  margin-bottom: 1rem;
+  color: #111;
+}
+
+.profile-section-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}

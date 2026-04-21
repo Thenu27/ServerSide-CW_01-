@@ -104,7 +104,7 @@ const RegisterPage = () => {
         </div>
 
         <div className="footer">
-          Already have an account? <a onClick={()=>navigate('/login')}>Sign in</a>
+          Already have an account? <a onClick={()=>navigate('/')}>Sign in</a>
         </div>
       </div>
     </div>

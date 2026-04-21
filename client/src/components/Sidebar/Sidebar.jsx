@@ -1,20 +1,37 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import "./Sidebar.css";
 import { useNavigate, useLocation } from "react-router-dom";
+import api from "../Api/Api";
+import { AuthContext } from "../../contexts/AuthContext";
 
 const Sidebar = () => {
+
+  const {setAccessToken} = useContext(AuthContext)
+
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
+  const logout = async () => {
+    try {
+     const response = await api.post("/auth/logout"); 
+     if(response){
+      console.log(response.data);
+     }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setAccessToken(null); 
+      navigate("/"); 
+    }
+  };
+
   return (
     <>
-      {/* Toggle button */}
       <button className="menu-btn" onClick={() => setIsOpen(!isOpen)}>
         {isOpen ? "✕" : "☰"}
       </button>
 
-      {/* Overlay */}
       {isOpen && <div className="overlay" onClick={() => setIsOpen(false)} />}
 
       <div className={`sidebar ${isOpen ? "open" : ""}`}>
@@ -70,7 +87,7 @@ const Sidebar = () => {
           </div>
         </div>
 
-        <div className="logout-btn">Logout</div>
+        <div onClick={()=>logout()} className="logout-btn">Logout</div>
       </div>
     </>
   );

@@ -2,7 +2,7 @@ const { ApiController } = require('../controllers/apiController');
 const { BidController } = require('../controllers/bidController');
 const { ApiKeyMiddleware } = require('../middleware/apiKeyMiddleware');
 const { AuthMiddleware } = require('../middleware/authMiddleware');
-const { requireScope } = require('../middleware/requireScope');
+const { requireScope } = require('../middleware/apiKeyMiddleware');
 
 const apiRouter = require('express').Router();
 

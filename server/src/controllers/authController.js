@@ -67,10 +67,16 @@ class AuthController{
 
     logout = async(req,res,next)=>{
         try{
-            const {refreshToken} = req.body;
+            const {refreshToken} = req.cookies;
             console.log('hit')
             const userId = req.user.userId
             const result = await this.authService.logout(refreshToken,userId);
+
+            res.clearCookie("refreshToken", {
+                httpOnly: true,
+                secure: true,
+                sameSite: "strict",
+            });
 
             return res.status(200).json({
                 status:"success",

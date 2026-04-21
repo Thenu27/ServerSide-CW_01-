@@ -1,0 +1,69 @@
+.dynamic-section {
+  border: 1px solid #ececec;
+  border-radius: 12px;
+  padding: 1rem;
+  background: #fafafa;
+}
+
+.dynamic-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.dynamic-section-header h3 {
+  font-size: 16px;
+  color: #111;
+}
+
+.add-btn {
+  height: 34px;
+  padding: 0 12px;
+  border: none;
+  border-radius: 8px;
+  background: #111;
+  color: #fff;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.add-btn:hover {
+  background: #333;
+}
+
+.dynamic-item-card {
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  background: #fff;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.dynamic-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.remove-btn {
+  margin-top: 12px;
+  height: 34px;
+  padding: 0 12px;
+  border: none;
+  border-radius: 8px;
+  background: #d11a2a;
+  color: #fff;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.remove-btn:hover {
+  background: #a90f1d;
+}
+
+@media (max-width: 768px) {
+  .dynamic-grid {
+    grid-template-columns: 1fr;
+  }
+}

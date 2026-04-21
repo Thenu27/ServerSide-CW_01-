@@ -11,27 +11,33 @@ import ForgotPasswordPage from './pages/ForgotPasswordPage/ForgotPasswordPage'
 import Sidebar from './components/Sidebar/Sidebar'
 import ReportPage from './pages/ReportPage/ReportPage'
 import ChartSection from './components/ChartSection/ChartSection'
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute'
+import AlumniPreviewSection from './components/AlumniPreviewSection/AlumniPreviewSection'
+import AlumniProfilePage from './pages/AlumniProfilePage/AlumniProfilePage'
 
 function App() {
 
   return (
     <div className='app'>
       <Sidebar/>
-      <Routes>
+        <Routes>
+
+          <Route path="/" element={<LoginPage/>} />
           <Route path="/register" element={<RegisterPage/>} />
           <Route path="/verify-success" element={<VerifySuccess/>}/>
           <Route path="/verify-error" element={<VerifyError/>}/>
-          <Route path="/login" element={<LoginPage/>} />
-          <Route path="/dashboard" element={<DashboardPage/>}/>
           <Route path="/forgot-password" element={<ForgotPasswordPage/>}/>
-          <Route path="/reset-password" element={<ResetPasswordPage/>}/>
+          <Route path="/reset-password" element={<ResetPasswordPage/>}/>          
+          <Route path='/profile/create' element={<AlumniProfilePage/>}/>
+
+        <Route element={<ProtectedRoute/>}>
+          <Route path="/dashboard" element={<DashboardPage/>}/>
           <Route path="/view-alumni" element={<ViewAlumniPage/>}/>    
           <Route path="/report" element={<ReportPage/>}/>
           <Route path="/view-analytics" element={<ChartSection/>}/>
+        </Route>  
       </Routes>
-      {/* <RegisterPage/> */}
-      {/* <ViewAlumniPage/> */}
-      {/* <DashboardPage/> */}
+
     </div>
   )
 }
