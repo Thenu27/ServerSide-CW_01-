@@ -9,7 +9,7 @@ const VerifyError = () => {
         <h1>Verification Failed</h1>
         <p>The verification link is invalid, expired, or has already been used.</p>
 
-        <Link to="/login" className="verify-btn">
+        <Link to="/" className="verify-btn">
           Back to Login
         </Link>
       </div>

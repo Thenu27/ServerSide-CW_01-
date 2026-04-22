@@ -24,7 +24,7 @@ class EmploymentService{
             profileId : profile.id,
             companyName,
             jobTitle,
-            startDate:new Date(startDate),
+            startDate:startDate,
             endDate:endDate ? new Date(endDate) : null,
             description,
             industrySector

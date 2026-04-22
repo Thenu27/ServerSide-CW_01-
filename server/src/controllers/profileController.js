@@ -7,7 +7,9 @@ class ProfileController{
 
     createProfile = async(req,res,next)=>{
         try{
-            const {fullName, bio, linkedIn, imageUrl} = req.body
+            const {fullName, bio, linkedIn, imageUrl} = req.body    
+
+            console.log("profile create")
 
             if (!fullName) {
                 const error = new Error("Full name is required");
@@ -39,7 +41,7 @@ class ProfileController{
         try{
             const userId = req.user.userId;
             const profile = await this.profileService.getProfile(userId);
-
+            
             return res.status(200).json({
                 status:"success",
                 profile

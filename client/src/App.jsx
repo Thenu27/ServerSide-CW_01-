@@ -14,6 +14,7 @@ import ChartSection from './components/ChartSection/ChartSection'
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute'
 import AlumniPreviewSection from './components/AlumniPreviewSection/AlumniPreviewSection'
 import AlumniProfilePage from './pages/AlumniProfilePage/AlumniProfilePage'
+import NoAccess from './components/NoAccess/NoAccess'
 
 function App() {
 
@@ -28,13 +29,14 @@ function App() {
           <Route path="/verify-error" element={<VerifyError/>}/>
           <Route path="/forgot-password" element={<ForgotPasswordPage/>}/>
           <Route path="/reset-password" element={<ResetPasswordPage/>}/>          
-          <Route path='/profile/create' element={<AlumniProfilePage/>}/>
-
         <Route element={<ProtectedRoute/>}>
           <Route path="/dashboard" element={<DashboardPage/>}/>
           <Route path="/view-alumni" element={<ViewAlumniPage/>}/>    
           <Route path="/report" element={<ReportPage/>}/>
           <Route path="/view-analytics" element={<ChartSection/>}/>
+          <Route path='/profile' element={<AlumniProfilePage/>}/>
+          <Route path='/forbidden' element={<NoAccess/>}/>
+
         </Route>  
       </Routes>
 

@@ -9,7 +9,7 @@ const VerifySuccess = () => {
         <h1>Email Verified</h1>
         <p>Your email has been verified successfully. You can now log in.</p>
 
-        <Link to="/login" className="verify-btn">
+        <Link to="/" className="verify-btn">
           Go to Login
         </Link>
       </div>

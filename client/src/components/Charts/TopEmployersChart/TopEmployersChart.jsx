@@ -13,10 +13,13 @@ import "./TopEmployersChart.css";
 import api from "../../Api/Api";
 import { useEffect, useState, useRef } from "react";
 import * as htmlToImage from "html-to-image";
+import { useNavigate } from "react-router-dom";
 
 const TopEmployersChart = ({ data }) => {
   const [topEmployers, setTopEmployers] = useState([]);
   const chartRef = useRef();
+
+  const navigate = useNavigate();
 
   const getEmployers = async () => {
     try {
@@ -27,6 +30,9 @@ const TopEmployersChart = ({ data }) => {
         setTopEmployers(response.data.topEmployers || []);
       }
     } catch (err) {
+      if(err.status === 403){
+        navigate('/forbidden')
+      }
       console.log(err);
     }
   };

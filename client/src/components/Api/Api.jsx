@@ -17,6 +17,13 @@ api.interceptors.request.use((config) => {
     config.headers.Authorization = `Bearer ${accessToken}`;
   }
 
+  const apiKey = import.meta.env.VITE_API_KEY;
+
+  // if (config.url.includes("/analytics") || config.url.includes("/alumni-of-day")) {
+  //   config.headers["x-api-key"] = apiKey;
+  // }
+    config.headers["x-api-key"] = apiKey;
+
   return config;
 });
 

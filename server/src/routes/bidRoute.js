@@ -2,7 +2,7 @@ const express = require("express");
 const { BidController } = require("../controllers/bidController");
 const { AuthMiddleware } = require("../middleware/authMiddleware");
 const { AdminMiddleware } = require("../middleware/adminMiddleware");
-const { ApiKeyMiddleware } = require("../middleware/apiKeyMiddleware");
+const { ApiKeyMiddleware,requireScope} = require("../middleware/apiKeyMiddleware");
 
 const bidRouter = express.Router();
 const bidController = new BidController();
@@ -77,20 +77,21 @@ bidRouter.post('/winner',AuthMiddleware.requireAuth,AdminMiddleware.requireAdmin
  * @swagger
  * /bid/winner:
  *   get:
- *     summary: Get current winner
- *     tags: [Bid]
+ *     summary: Get today's featured alumnus
+ *     tags: [Public API]
  *     security:
  *       - bearerAuth: []
+ *         ApiKeyAuth: []
  *     responses:
  *       200:
  *         description: Winner retrieved successfully
  *       401:
- *         description: Unauthorized
- *       404:
- *         description: No featured alumnus found for today
+ *         description: Unauthorized or API key required
+ *       403:
+ *         description: Invalid API key or insufficient permission
  */
 
-bidRouter.get('/winner',AuthMiddleware.requireAuth,bidController.getWinner);
+bidRouter.get('/winner',AuthMiddleware.requireAuth,requireScope('read:alumni_of_day'),bidController.getWinner);
 /**
  * @swagger
  * /bid/result:

@@ -6,26 +6,35 @@ class CertificationController{
         this.certificationService = new CertificationService()
     }
 
-    addCertification = async(req,res,next)=>{
-        try{
-            const {name,issuer,year} = req.body;
+    addCertification = async (req, res, next) => {
+        try {
+            const { name, issuer, year } = req.body;
             const userId = req.user.userId;
 
-            const certification = await this.certificationService.addCertification(userId,name,issuer,year)
+            if (!name || !issuer || !year) {
+                return res.status(400).json({
+                    status: "error",
+                    message: "All fields (name, issuer, year) are required"
+                });
+            }
+
+            const certification = await this.certificationService.addCertification(
+                userId,
+                name,
+                issuer,
+                year
+            );
 
             res.status(201).json({
-                status:"success",
+                status: "success",
                 message: "Certification added successfully",
                 certification
-            })
+            });
 
-        }catch(err){
-            next(err)
+        } catch (err) {
+            next(err);
         }
-
-
-
-    }
+    };
 
     getCertification = async(req,res,next)=>{
         try{
@@ -68,6 +77,22 @@ class CertificationController{
             const { id } = req.params;
             const { name, issuer, year } = req.body;
 
+       
+            if (!id) {
+                return res.status(400).json({
+                    status: "error",
+                    message: "Certification ID is required"
+                });
+            }
+
+           
+            if (!name && !issuer && !year) {
+                return res.status(400).json({
+                    status: "error",
+                    message: "At least one field (name, issuer, year) must be provided"
+                });
+            }
+
             const certification = await this.certificationService.updateCertification(
                 userId,
                 id,
@@ -76,11 +101,20 @@ class CertificationController{
                 year
             );
 
+         
+            if (!certification) {
+                return res.status(404).json({
+                    status: "error",
+                    message: "Certification not found"
+                });
+            }
+
             res.status(200).json({
                 status: "success",
                 message: "Certification updated successfully",
                 certification
             });
+
         } catch (err) {
             next(err);
         }

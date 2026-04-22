@@ -21,15 +21,24 @@ const RegisterPage = () => {
   };
 
   const register = async () => {
+        window.alert(
+        "Please check your email and verify your account before logging in."
+      );
     try {
       const response = await api.post("/auth/register", formData);
       console.log(response.data.message);
-      window.alert("User registered successfully!");
+
+
+
+      navigate("/"); // optional: redirect to login page
     } catch (err) {
       console.log(err);
       window.alert("Error Registering User!");
     }
   };
+
+
+  
 
   return (
     <div className="page">

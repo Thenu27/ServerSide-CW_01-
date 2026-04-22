@@ -12,6 +12,13 @@ class LiscenceController{
             const {name,issuer,year} = req.body;
             const userId = req.user.userId;
 
+            if (!name || !issuer || !year) {
+                return res.status(400).json({
+                    status: "error",
+                    message: "All fields (name, issuer, year) are required",
+                });
+            }
+
             const liscence = await this.liscenceService.addLiscence(
                 userId,name,issuer,year
             )
@@ -65,6 +72,13 @@ class LiscenceController{
             const userId = req.user.userId;
             const { id } = req.params;
             const { name, issuer, year } = req.body;
+
+            if (!name || !issuer || !year) {
+                return res.status(400).json({
+                    status: "error",
+                    message: "All fields (name, issuer, year) are required",
+                });
+            }
 
             const liscence = await this.liscenceService.updateLiscence(
                 userId,

@@ -1,0 +1,69 @@
+/* Page layout (same as login/register) */
+.verify-page {
+  min-height: 100vh;
+  background: #f5f6f8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Card */
+.verify-card {
+  background: #fff;
+  padding: 40px 30px;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+/* Icon */
+.verify-icon {
+  width: 70px;
+  height: 70px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: bold;
+}
+
+.verify-icon.success {
+  background: #e6f9f0;
+  color: #22c55e;
+}
+
+/* Title */
+.verify-card h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #111;
+}
+
+/* Text */
+.verify-card p {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 25px;
+}
+
+/* Button (same style feel as login) */
+.verify-btn {
+  display: inline-block;
+  width: 100%;
+  padding: 12px;
+  background: #111;
+  color: #fff;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: 0.2s ease;
+}
+
+.verify-btn:hover {
+  background: #333;
+}

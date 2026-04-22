@@ -4,11 +4,17 @@ class CourseController {
   constructor() {
     this.courseService = new CourseService();
   }
-
   addCourse = async (req, res, next) => {
     try {
       const { name, provider, year } = req.body;
       const userId = req.user.userId;
+
+      if (!name || !provider || !year) {
+        return res.status(400).json({
+          status: "error",
+          message: "All fields (name, provider, year) are required",
+        });
+      }
 
       const course = await this.courseService.addCourse(
         userId,
@@ -22,11 +28,11 @@ class CourseController {
         message: "Course added successfully",
         course,
       });
-    } catch (err) {
-      next(err);
+      } catch (err) {
+        next(err);
+      }
     }
-  };
-
+    
     getCourses = async (req, res, next) => {
         try {
           const userId = req.user.userId;
@@ -59,7 +65,7 @@ class CourseController {
     }
   };
 
-      updateCourse = async (req, res, next) => {
+  updateCourse = async (req, res, next) => {
         try {
           const userId = req.user.userId;
           const { id } = req.params;

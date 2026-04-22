@@ -27,16 +27,24 @@ class ApiService {
 
         const apiKey = this.generateApiKey();
 
+        const hashedApiKey = crypto
+        .createHash("sha256")
+        .update(apiKey)
+        .digest("hex");
+
         const client = await prisma.apiClient.create({
-            data: {
-                name,
-                apiKey,
-                userId,
-                scopes   
-            }
+        data: {
+            name,
+            apiKey: hashedApiKey,
+            userId,
+            scopes   
+        }
         });
 
-        return client;
+        return {
+            client,
+            apiKey 
+        };
     };
 }
 

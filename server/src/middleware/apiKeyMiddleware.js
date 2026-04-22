@@ -1,4 +1,5 @@
 const { prisma } = require("../config/prisma");
+const crypto = require("crypto");
 
 class ApiKeyMiddleware {
   static requireApiKey = async (req, res, next) => {
@@ -12,8 +13,10 @@ class ApiKeyMiddleware {
         });
       }
 
+      const hashedApiKey = crypto.createHash("sha256").update(apiKey).digest("hex");
+
       const client = await prisma.apiClient.findUnique({
-        where: { apiKey },
+        where: { apiKey:hashedApiKey },
       });
 
       if (!client) {

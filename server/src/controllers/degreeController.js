@@ -6,10 +6,19 @@ class DegreeController{
     }
 
     addDegree = async(req,res,next)=>{
-        console.log('hit')
+
         try{
             const {degreeName,institution,year} = req.body;
+            
             const userId = req.user.userId
+
+            if (!degreeName || !institution || !year) {
+            return res.status(400).json({
+                status: "error",
+                message: "All fields (degreeName, institution, year) are required",
+            });
+            }
+
             const degree = await this.degreeService.addDegree(userId,degreeName,institution,year)
 
             res.status(201).json({
@@ -60,6 +69,13 @@ class DegreeController{
             const userId = req.user.userId;
             const { id } = req.params;
             const { degreeName, institution, year } = req.body;
+            
+            if (!degreeName || !institution || !year) {
+            return res.status(400).json({
+                status: "error",
+                message: "All fields (degreeName, institution, year) are required",
+            });
+            }
 
             const degree = await this.degreeService.updateDegree(
                 userId,

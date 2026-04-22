@@ -20,6 +20,11 @@ const swaggerOptions = {
           scheme: "bearer",
           bearerFormat: "JWT",
         },
+        ApiKeyAuth: {
+          type: "apiKey",
+          in: "header",
+          name: "x-api-key",
+        },
       },
     },
   },

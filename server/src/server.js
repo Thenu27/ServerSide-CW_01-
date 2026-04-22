@@ -19,7 +19,6 @@ const helmet = require("helmet");
 
 const cors = require('cors');
 const { analyticsRoute } = require('./routes/analyticsRoute.js');
-const { viewAlumniRoute } = require('./routes/viewAlumniRoute.js');
 const insightsRouter = require('./routes/insightsRoute.js');
 
 const globalLimiter = rateLimit({
