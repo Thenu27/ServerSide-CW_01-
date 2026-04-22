@@ -7,7 +7,7 @@ class LiscenceService{
         this.usageService = new UsageService()
     }
 
-    addLiscence = async(userId,name,issuer,year)=>{
+    addLiscence = async(userId,name,issuer,year,url)=>{
         const profile = await prisma.profile.findUnique({
             where:{userId}
         }) 
@@ -23,7 +23,8 @@ class LiscenceService{
                 profileId:profile.id,
                 name,
                 issuer,
-                year
+                year,
+                url
             }
         })
 
@@ -121,14 +122,14 @@ class LiscenceService{
         };
 
 
-        updateLiscence = async (userId, liscenceId, name, issuer, year) => {
+        updateLiscence = async (userId, liscenceId, name, issuer, year,url) => {
             const parsedYear = Number(year);
 
-            if (!name || !issuer || year === undefined || year === null) {
-                const error = new Error("Name, issuer, and year are required");
-                error.statusCode = 400;
-                throw error;
-            }
+            // if (!name || !issuer || year === undefined || year === null) {
+            //     const error = new Error("Name, issuer, and year are required");
+            //     error.statusCode = 400;
+            //     throw error;
+            // }
 
             const profile = await prisma.profile.findUnique({
                 where: { userId }
@@ -161,7 +162,8 @@ class LiscenceService{
                 data: {
                     name,
                     issuer,
-                    year: parsedYear
+                    year: parsedYear,
+                    url
                 }
             });
 

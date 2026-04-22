@@ -6,10 +6,10 @@ class CourseController {
   }
   addCourse = async (req, res, next) => {
     try {
-      const { name, provider, year } = req.body;
+      const { name, provider, year,url } = req.body;
       const userId = req.user.userId;
 
-      if (!name || !provider || !year) {
+      if (!name || !provider || !year || !url) {
         return res.status(400).json({
           status: "error",
           message: "All fields (name, provider, year) are required",
@@ -20,7 +20,8 @@ class CourseController {
         userId,
         name,
         provider,
-        year
+        year,
+        url
       );
 
       return res.status(201).json({
@@ -69,14 +70,15 @@ class CourseController {
         try {
           const userId = req.user.userId;
           const { id } = req.params;
-          const { name, provider, year } = req.body;
+          const { name, provider, year, url } = req.body;
 
           const course = await this.courseService.updateCourse(
             userId,
             id,
             name,
             provider,
-            year
+            year,
+            url
           );
 
           return res.status(200).json({

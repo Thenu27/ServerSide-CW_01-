@@ -7,13 +7,13 @@ class CertificationService{
         this.usageService = new UsageService();
     }
 
-    addCertification = async(userId, name, issuer, year)=>{
+    addCertification = async(userId, name, issuer, year,url)=>{
 
-        if (!name || !issuer || year === undefined || year === null) {
-            const error = new Error("Name, issuer, and year are required");
-            error.statusCode = 400;
-            throw error;
-        }
+        // if (!name || !issuer || year === undefined || year === null) {
+        //     const error = new Error("Name, issuer, and year are required");
+        //     error.statusCode = 400;
+        //     throw error;
+        // }
 
         const profile = await prisma.profile.findUnique({
             where:{userId}
@@ -30,7 +30,8 @@ class CertificationService{
                 profileId : profile.id,
                 name,
                 issuer,
-                year
+                year,
+                url
             }
         })
 
@@ -127,13 +128,13 @@ class CertificationService{
     };
 
 
-    updateCertification = async (userId, certificationId, name, issuer, year) => {
+    updateCertification = async (userId, certificationId, name, issuer, year,url) => {
 
-        if (!name || !issuer || year === undefined || year === null) {
-            const error = new Error("Name, issuer, and year are required");
-            error.statusCode = 400;
-            throw error;
-        }
+        // if (!name || !issuer || year === undefined || year === null ) {
+        //     const error = new Error("Name, issuer, and year are required");
+        //     error.statusCode = 400;
+        //     throw error;
+        // }
 
         const profile = await prisma.profile.findUnique({
             where: { userId }
@@ -166,7 +167,8 @@ class CertificationService{
             data: {
                 name,
                 issuer,
-                year
+                year,
+                url
             }
         });
 

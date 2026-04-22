@@ -75,7 +75,6 @@ class AuthService{
             link: verificationLink
         });
 
-        console.log("verificationToken:",verificationToken)
 
     return user
 
@@ -336,7 +335,6 @@ loginUser = async (email,password)=>{
 
 
     logout = async(refreshToken,userId)=>{
-        console.log('hit')
         if(!refreshToken){
             const error = new Error("Refresh token is required");
             error.statusCode = 401;

@@ -9,7 +9,7 @@ const emptyDegree = {
   id: "",
   degreeName: "",
   institution: "",
-  degreeUrl: "",
+  url: "",
   year: "",
 };
 
@@ -17,7 +17,7 @@ const emptyCertification = {
   id: "",
   name: "",
   issuer: "",
-  certUrl: "",
+  url: "",
   year: "",
 };
 
@@ -25,7 +25,7 @@ const emptyLicence = {
   id: "",
   name: "",
   issuer: "",
-  licenceUrl: "",
+  url: "",
   year: "",
 };
 
@@ -33,7 +33,7 @@ const emptyCourse = {
   id: "",
   name: "",
   provider: "",
-  courseUrl: "",
+  url: "",
   year: "",
 };
 
@@ -207,7 +207,7 @@ const AlumniProfilePage = () => {
       if (
         degree.degreeName ||
         degree.institution ||
-        degree.degreeUrl ||
+        degree.url ||
         degree.year
       ) {
         await api.post("/degree", {
@@ -244,7 +244,7 @@ const AlumniProfilePage = () => {
       if (
         licence.name ||
         licence.issuer ||
-        licence.licenceUrl ||
+        licence.url ||
         licence.year
       ) {
         await api.post("/liscence", {
@@ -262,7 +262,7 @@ const AlumniProfilePage = () => {
 
   try {
     for (const course of formData.courses) {
-      if (course.name || course.provider || course.courseUrl || course.year) {
+      if (course.name || course.provider || course.url|| course.year) {
         await api.post("/course", {
           ...course,
           year: course.year ? Number(course.year) : null,
@@ -313,7 +313,7 @@ const updateFullProfile = async () => {
       const hasData =
         degree.degreeName ||
         degree.institution ||
-        degree.degreeUrl ||
+        degree.url ||
         degree.year;
 
       if (!hasData) continue;
@@ -338,7 +338,7 @@ const updateFullProfile = async () => {
 
   try {
     for (const cert of formData.certifications) {
-      const hasData = cert.name || cert.issuer || cert.certUrl || cert.year;
+      const hasData = cert.name || cert.issuer || cert.url|| cert.year;
 
       if (!hasData) continue;
 
@@ -363,7 +363,7 @@ const updateFullProfile = async () => {
   try {
     for (const licence of formData.licences) {
       const hasData =
-        licence.name || licence.issuer || licence.licenceUrl || licence.year;
+        licence.name || licence.issuer || licence.url || licence.year;
 
       if (!hasData) continue;
 
@@ -388,7 +388,7 @@ const updateFullProfile = async () => {
   try {
     for (const course of formData.courses) {
       const hasData =
-        course.name || course.provider || course.courseUrl || course.year;
+        course.name || course.provider || course.url|| course.year;
 
       if (!hasData) continue;
 
@@ -535,7 +535,7 @@ const updateFullProfile = async () => {
             fields={[
               { label: "Degree Name", name: "degreeName", type: "text" },
               { label: "Institution", name: "institution", type: "text" },
-              { label: "Degree URL", name: "degreeUrl", type: "text" },
+              { label: "Degree URL", name: "url", type: "text" },
               { label: "Year", name: "year", type: "number" },
             ]}
           />
@@ -553,7 +553,7 @@ const updateFullProfile = async () => {
             fields={[
               { label: "Certification Name", name: "name", type: "text" },
               { label: "Issuer", name: "issuer", type: "text" },
-              { label: "Certification URL", name: "certUrl", type: "text" },
+              { label: "Certification URL", name: "url", type: "text" },
               { label: "Year", name: "year", type: "number" },
             ]}
           />
@@ -571,7 +571,7 @@ const updateFullProfile = async () => {
             fields={[
               { label: "Licence Name", name: "name", type: "text" },
               { label: "Issuer", name: "issuer", type: "text" },
-              { label: "Licence URL", name: "licenceUrl", type: "text" },
+              { label: "Licence URL", name: "url", type: "text" },
               { label: "Year", name: "year", type: "number" },
             ]}
           />
@@ -589,7 +589,7 @@ const updateFullProfile = async () => {
             fields={[
               { label: "Course Name", name: "name", type: "text" },
               { label: "Provider", name: "provider", type: "text" },
-              { label: "Course URL", name: "courseUrl", type: "text" },
+              { label: "Course URL", name: "url", type: "text" },
               { label: "Year", name: "year", type: "number" },
             ]}
           />

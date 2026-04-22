@@ -7,7 +7,7 @@ class EmploymentService{
       this.usageService = new UsageService()
     }
 
-    addEmployment = async(userId,companyName,jobTitle,startDate,endDate,description,industrySector)=>{
+    addEmployment = async(userId,companyName,jobTitle,startDate,endDate,industrySector)=>{
 
       const profile = await prisma.profile.findUnique({
         where:{userId}
@@ -24,9 +24,8 @@ class EmploymentService{
             profileId : profile.id,
             companyName,
             jobTitle,
-            startDate:startDate,
-            endDate:endDate ? new Date(endDate) : null,
-            description,
+            startDate:new Date(startDate),
+            endDate:new Date(endDate),
             industrySector
         }
     }) 
@@ -128,7 +127,7 @@ class EmploymentService{
         return { message: "Employment history deleted successfully" };
     };
 
-    updateEmployment = async (userId,employmentId,companyName,jobTitle,startDate,endDate,description) => {
+    updateEmployment = async (userId,employmentId,companyName,jobTitle,startDate,endDate,industrySector) => {
         if (!companyName || !jobTitle || !startDate) {
             const error = new Error("Company name, job title, and start date are required");
             error.statusCode = 400;
@@ -171,7 +170,8 @@ class EmploymentService{
                 jobTitle,
                 startDate: parsedStartDate,
                 endDate: parsedEndDate,
-                description
+                industrySector
+                
             }
         });
 

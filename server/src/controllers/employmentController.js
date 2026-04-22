@@ -6,19 +6,19 @@ class EmploymentController{
     }
 
     addEmployment = async(req,res,next)=>{
-        console.log('employment hit')
         try{
-            const {companyName, jobTitle, startDate, endDate, description,industrySector} = req.body
+            const {companyName, jobTitle, startDate, endDate,industrySector} = req.body
             const userId = req.user.userId
+                    console.log(req.body)
 
-            if (!companyName || !jobTitle) {
+            if (!companyName || !jobTitle ||!startDate || !endDate || !industrySector) {
             return res.status(400).json({
                 status: "error",
-                message: "All fields (companyName, jobTitle) are required",
+                message: "All fields  are required",
             });
             }           
             const employment = await this.employmentService.addEmployment(
-                userId,companyName, jobTitle, startDate, endDate, description, industrySector
+                userId,companyName, jobTitle, startDate, endDate, industrySector
             )
 
             res.status(201).json({
@@ -69,7 +69,7 @@ class EmploymentController{
             try {
                 const userId = req.user.userId;
                 const { id } = req.params;
-                const { companyName, jobTitle, startDate, endDate, description } = req.body;
+                const { companyName, jobTitle, startDate, endDate, industrySector } = req.body;
                 
                 if (!companyName || !jobTitle) {
                 return res.status(400).json({
@@ -84,7 +84,7 @@ class EmploymentController{
                     jobTitle,
                     startDate,
                     endDate,
-                    description
+                    industrySector
                 );
 
                 res.status(200).json({

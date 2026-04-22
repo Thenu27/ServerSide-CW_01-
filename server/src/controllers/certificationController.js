@@ -8,13 +8,13 @@ class CertificationController{
 
     addCertification = async (req, res, next) => {
         try {
-            const { name, issuer, year } = req.body;
+            const { name, issuer, year, url} = req.body;
             const userId = req.user.userId;
 
-            if (!name || !issuer || !year) {
+            if (!name || !issuer || !year || !url) {
                 return res.status(400).json({
                     status: "error",
-                    message: "All fields (name, issuer, year) are required"
+                    message: "All fields (name, issuer, year, url) are required"
                 });
             }
 
@@ -22,7 +22,8 @@ class CertificationController{
                 userId,
                 name,
                 issuer,
-                year
+                year,
+                url
             );
 
             res.status(201).json({
@@ -75,7 +76,7 @@ class CertificationController{
         try {
             const userId = req.user.userId;
             const { id } = req.params;
-            const { name, issuer, year } = req.body;
+            const { name, issuer, year,  url } = req.body;
 
        
             if (!id) {
@@ -85,11 +86,10 @@ class CertificationController{
                 });
             }
 
-           
-            if (!name && !issuer && !year) {
+            if (!name || !issuer || !year || !url) {
                 return res.status(400).json({
                     status: "error",
-                    message: "At least one field (name, issuer, year) must be provided"
+                    message: "All fields (name, issuer, year, url) are required"
                 });
             }
 
@@ -98,7 +98,8 @@ class CertificationController{
                 id,
                 name,
                 issuer,
-                year
+                year,
+                url
             );
 
          

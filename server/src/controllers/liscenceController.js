@@ -9,10 +9,10 @@ class LiscenceController{
     addLiscence = async(req,res,next)=>{
 
         try{
-            const {name,issuer,year} = req.body;
+            const {name,issuer,year,url} = req.body;
             const userId = req.user.userId;
 
-            if (!name || !issuer || !year) {
+            if (!name || !issuer || !year || !url) {
                 return res.status(400).json({
                     status: "error",
                     message: "All fields (name, issuer, year) are required",
@@ -20,7 +20,7 @@ class LiscenceController{
             }
 
             const liscence = await this.liscenceService.addLiscence(
-                userId,name,issuer,year
+                userId,name,issuer,year,url
             )
 
             res.status(201).json({
@@ -71,9 +71,9 @@ class LiscenceController{
         try {
             const userId = req.user.userId;
             const { id } = req.params;
-            const { name, issuer, year } = req.body;
+            const { name, issuer, year, url } = req.body;
 
-            if (!name || !issuer || !year) {
+            if (!name || !issuer || !year || !url) {
                 return res.status(400).json({
                     status: "error",
                     message: "All fields (name, issuer, year) are required",
@@ -85,7 +85,8 @@ class LiscenceController{
                 id,
                 name,
                 issuer,
-                year
+                year,
+                url
             );
 
             res.status(200).json({

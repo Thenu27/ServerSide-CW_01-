@@ -7,7 +7,7 @@ class CourseService {
     this.usageService = new UsageService();
   }
 
-  addCourse = async (userId, name, provider, year) => {
+  addCourse = async (userId, name, provider, year, url) => {
     const profile = await prisma.profile.findUnique({
       where: { userId },
     });
@@ -24,6 +24,7 @@ class CourseService {
         name,
         provider,
         year,
+        url
       },
     });
 
@@ -123,10 +124,10 @@ class CourseService {
 
 
 
-    updateCourse = async (userId, courseId, name, provider, year) => {
+    updateCourse = async (userId, courseId, name, provider, year,url) => {
         const parsedYear = Number(year);
 
-        if (!name || !provider || year === undefined || year === null) {
+        if (!name || !provider || year === undefined || year === null || !url) {
           const error = new Error("Name, provider, and year are required");
           error.statusCode = 400;
           throw error;
@@ -164,6 +165,7 @@ class CourseService {
             name,
             provider,
             year: parsedYear,
+            url
           },
         });
 

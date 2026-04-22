@@ -88,6 +88,7 @@ model Degree {
   degreeName  String
   institution String
   year        Int
+  url          String
   createdAt   DateTime @default(now())
 
   profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
@@ -102,7 +103,6 @@ model EmploymentHistory {
   jobTitle    String
   startDate   DateTime
   endDate     DateTime?
-  description String?
   industrySector String
   createdAt   DateTime @default(now())
 
@@ -117,6 +117,7 @@ model Certification {
   name         String
   issuer       String
   year         Int
+  url          String
   createdAt    DateTime @default(now())
 
   profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
@@ -130,6 +131,7 @@ model Licence {
   name      String
   issuer    String
   year      Int
+  url          String
   createdAt DateTime @default(now())
 
   profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
@@ -143,6 +145,7 @@ model Course {
   name      String
   provider  String
   year      Int
+  url          String
   createdAt DateTime @default(now())
 
   profile Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)

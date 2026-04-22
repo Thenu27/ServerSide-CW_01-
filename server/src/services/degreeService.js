@@ -7,7 +7,7 @@ class DegreeService{
         this.usageService = new UsageService()
     }
 
-    addDegree = async(userId, degreeName, institution, year)=>{
+    addDegree = async(userId, degreeName, institution, year,url)=>{
         const profile = await prisma.profile.findUnique({
             where:{userId}
         })
@@ -23,7 +23,8 @@ class DegreeService{
                 profileId: profile.id,
                 degreeName,
                 institution,
-                year
+                year,
+                url
             }
         })
 
@@ -121,14 +122,14 @@ class DegreeService{
         };
 
 
-        updateDegree = async (userId, degreeId, degreeName, institution, year) => {
+        updateDegree = async (userId, degreeId, degreeName, institution, year,url) => {
             const parsedYear = Number(year);
 
-            if (!degreeName || !institution || year === undefined || year === null) {
-                const error = new Error("Degree name, institution, and year are required");
-                error.statusCode = 400;
-                throw error;
-            }
+            // if (!degreeName || !institution || year === undefined || year === null) {
+            //     const error = new Error("Degree name, institution, and year are required");
+            //     error.statusCode = 400;
+            //     throw error;
+            // }
 
             const profile = await prisma.profile.findUnique({
                 where: { userId }
@@ -161,7 +162,8 @@ class DegreeService{
                 data: {
                     degreeName,
                     institution,
-                    year: parsedYear
+                    year: parsedYear,
+                    url
                 }
             });
 

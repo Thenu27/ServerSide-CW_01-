@@ -8,18 +8,18 @@ class DegreeController{
     addDegree = async(req,res,next)=>{
 
         try{
-            const {degreeName,institution,year} = req.body;
-            
+            const {degreeName,institution,year,url} = req.body;
+            console.log(req.body)
             const userId = req.user.userId
 
-            if (!degreeName || !institution || !year) {
-            return res.status(400).json({
-                status: "error",
-                message: "All fields (degreeName, institution, year) are required",
-            });
+            if (!degreeName || !institution || !year || !url) {
+                return res.status(400).json({
+                    status: "error",
+                    message: "All fields (degreeName, institution, year, url) are required",
+                });
             }
 
-            const degree = await this.degreeService.addDegree(userId,degreeName,institution,year)
+            const degree = await this.degreeService.addDegree(userId,degreeName,institution,year,url)
 
             res.status(201).json({
                 status:"Success",
@@ -27,6 +27,7 @@ class DegreeController{
                 degree
             })
         }catch(err){
+            console.log(err)
             next(err)
         }
     }
@@ -68,12 +69,12 @@ class DegreeController{
         try {
             const userId = req.user.userId;
             const { id } = req.params;
-            const { degreeName, institution, year } = req.body;
+            const { degreeName, institution, year, url } = req.body;
             
-            if (!degreeName || !institution || !year) {
+            if (!degreeName || !institution || !year || !url) {
             return res.status(400).json({
                 status: "error",
-                message: "All fields (degreeName, institution, year) are required",
+                message: "All fields (degreeName, institution, year, url) are required",
             });
             }
 
@@ -82,7 +83,8 @@ class DegreeController{
                 id,
                 degreeName,
                 institution,
-                year
+                year,
+                url
             );
 
             res.status(200).json({
