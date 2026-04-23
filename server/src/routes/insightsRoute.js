@@ -1,12 +1,15 @@
 const express = require("express");
 const { InsightsController } = require("../controllers/insightsController");
+const { ApiKeyMiddleware, requireScope } = require("../middleware/apiKeyMiddleware");
 
 const  insightsRouter = express.Router();
 const insightsController = new InsightsController();
+insightsRouter.use(ApiKeyMiddleware.requireApiKey);
+insightsRouter.use(requireScope("read:analytics"));
 
 /**
  * @swagger
- * /insights:
+ * /key-insights:
  *   get:
  *     summary: Get key alumni insights
  *     description: Returns the most common certification, most common employer, top industry, and top emerging skill.

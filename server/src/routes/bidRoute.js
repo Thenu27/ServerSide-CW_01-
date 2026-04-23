@@ -91,7 +91,7 @@ bidRouter.post('/winner',AuthMiddleware.requireAuth,AdminMiddleware.requireAdmin
  *         description: Invalid API key or insufficient permission
  */
 
-bidRouter.get('/winner',AuthMiddleware.requireAuth,requireScope('read:alumni_of_day'),bidController.getWinner);
+bidRouter.get('/winner',ApiKeyMiddleware.requireApiKey,requireScope('read:alumni_of_day'),bidController.getWinner);
 /**
  * @swagger
  * /bid/result:
