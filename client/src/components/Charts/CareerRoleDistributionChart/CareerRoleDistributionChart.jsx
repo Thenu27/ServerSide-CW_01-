@@ -67,8 +67,8 @@ const CareerRoleDistributionChart = ({ data }) => {
               nameKey="name"
               cx="50%"
               cy="50%"
-              innerRadius={70}
-              outerRadius={100}
+              innerRadius={80}   // increased → clearer donut hole
+              outerRadius={110}
               paddingAngle={3}
             >
               {careerNames.map((entry, index) => (

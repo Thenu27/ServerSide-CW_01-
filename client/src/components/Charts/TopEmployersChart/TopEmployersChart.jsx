@@ -1,9 +1,9 @@
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  Radar,
   Tooltip,
   Legend,
   ResponsiveContainer,
@@ -30,8 +30,8 @@ const TopEmployersChart = ({ data }) => {
         setTopEmployers(response.data.topEmployers || []);
       }
     } catch (err) {
-      if(err.status === 403){
-        navigate('/forbidden')
+      if (err.response && err.response.status === 403) {
+        navigate("/forbidden");
       }
       console.log(err);
     }
@@ -65,25 +65,22 @@ const TopEmployersChart = ({ data }) => {
         </button>
       </div>
 
-      
       <div className="top-employers-chart-wrapper" ref={chartRef}>
         <ResponsiveContainer width="100%" height={300}>
-          <BarChart
-            data={topEmployers}
-            layout="vertical"
-            margin={{ top: 10, right: 20, left: 40, bottom: 10 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis type="number" />
-            <YAxis dataKey="name" type="category" width={120} />
+          <RadarChart outerRadius="80%" data={topEmployers}>
+            <PolarGrid />
+            <PolarAngleAxis dataKey="name" />
+            <PolarRadiusAxis />
+            <Radar
+              name="Employers"
+              dataKey="value"
+              stroke="#3B82F6"
+              fill="#3B82F6"
+              fillOpacity={0.6}
+            />
             <Tooltip />
             <Legend />
-            <Bar
-              dataKey="value"
-              fill="#3B82F6"
-              radius={[0, 8, 8, 0]}
-            />
-          </BarChart>
+          </RadarChart>
         </ResponsiveContainer>
       </div>
     </div>

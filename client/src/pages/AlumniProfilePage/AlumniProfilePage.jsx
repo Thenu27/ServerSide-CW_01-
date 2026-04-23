@@ -458,7 +458,7 @@ const updateFullProfile = async () => {
     if (!confirmed) return;
 
     try {
-      await api.delete(`/profile/${formData.id}`);
+      await api.delete(`/profile`);
       alert("Profile deleted successfully!");
       setFormData(emptyFormData);
       setHasProfile(false);

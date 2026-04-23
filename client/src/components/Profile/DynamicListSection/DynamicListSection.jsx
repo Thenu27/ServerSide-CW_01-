@@ -35,7 +35,7 @@ const DynamicListSection = ({
             ))}
           </div>
 
-          {items.length > 1 && (
+          {items.length > 0 && (
             <button
               type="button"
               className="remove-btn"

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../Api/Api";
 import { AuthContext } from "../../contexts/AuthContext";
 import "./DashboardAlumniPreview.css";
+import LoadingSpinner from "../LoadingSpinner/LoadingSpinner";
 
 function getInitials(name) {
   return name
@@ -66,7 +67,7 @@ const DashboardAlumniPreview = () => {
     }
   }, [loading, accessToken]);
 
-  if (loading) return <div className="dashboard-alumni-preview">Loading...</div>;
+  if (loading) return <div className="dashboard-alumni-preview"><LoadingSpinner/></div>;
 
   return (
     <div className="dashboard-alumni-preview">

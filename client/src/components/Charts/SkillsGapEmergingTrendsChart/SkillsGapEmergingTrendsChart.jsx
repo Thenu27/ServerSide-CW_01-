@@ -1,6 +1,6 @@
 import {
-  BarChart,
-  Bar,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -59,18 +59,23 @@ const SkillsGapEmergingTrendsChart = ({ data }) => {
 
       <div className="skills-gap-chart-wrapper" ref={chartRef}>
         <ResponsiveContainer width="100%" height={300}>
-          <BarChart
+          <AreaChart
             data={skillGaps}
-            layout="vertical"
             margin={{ top: 10, right: 20, left: 30, bottom: 10 }}
           >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis type="number" />
-            <YAxis dataKey="name" type="category" width={140} />
+            <XAxis dataKey="name" />
+            <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey="value" fill="#10B981" radius={[0, 8, 8, 0]} />
-          </BarChart>
+            <Area
+              type="monotone"
+              dataKey="value"
+              stroke="#10B981"
+              fill="#10B981"
+              fillOpacity={0.4}
+            />
+          </AreaChart>
         </ResponsiveContainer>
       </div>
     </div>

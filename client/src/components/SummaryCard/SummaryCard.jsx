@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./SummaryCard.css";
 import api from "../Api/Api";
+import LoadingSpinner from "../LoadingSpinner/LoadingSpinner";
 
 const SummaryCards = ({ summary: summaryProp }) => {
   const [summary, setSummary] = useState(summaryProp || null);
@@ -12,6 +13,9 @@ const SummaryCards = ({ summary: summaryProp }) => {
         setSummary(response.data.summary);
       }
     } catch (error) {
+      if (error.response && error.response.status === 403) {
+        navigate('/forbidden');
+       }
       console.error("Error fetching summary:", error);
     }
   };
@@ -24,7 +28,7 @@ const SummaryCards = ({ summary: summaryProp }) => {
     }
   }, [summaryProp]);
 
-  if (!summary) return <p>Loading...</p>;
+  if (!summary) return <div><LoadingSpinner/></div>;
 
   return (
     <div className="summary-cards-container">

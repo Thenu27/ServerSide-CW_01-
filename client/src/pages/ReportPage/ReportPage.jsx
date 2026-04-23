@@ -8,6 +8,8 @@ import { AuthContext } from "../../contexts/AuthContext";
 import SummaryCards from "../../components/SummaryCard/SummaryCard";
 import KeyInsightsChart from "../../components/Charts/KeyInsightsChart/KeyInsightsChart";
 import DashboardAlumniPreview from "../../components/DashboardAlumniPreview/DashboardAlumniPreview";
+import { useNavigate } from "react-router-dom";
+import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 
 const ReportPage = () => {
   const [skills, setSkills] = useState([]);
@@ -19,6 +21,7 @@ const ReportPage = () => {
     mostCommonEmployer: "",
     emergingSkill: "",
   });
+   const navigate = useNavigate();
   const [alumni, setAlumni] = useState([]);
 
   const { loading, accessToken } = useContext(AuthContext);
@@ -30,6 +33,9 @@ const ReportPage = () => {
       const response = await api.get("/analytics/skill-gaps");
       setSkills(response.data.skillGaps || []);
     } catch (err) {
+      if (err.response && err.response.status === 403) {
+        navigate('/forbidden');
+       }
       console.log(err);
     }
   };
@@ -39,6 +45,11 @@ const ReportPage = () => {
       const response = await api.get("/certification/all");
       setCertification(response.data.allCert || []);
     } catch (err) {
+
+      if (err.response && err.response.status === 403) {
+        navigate('/forbidden');
+       }
+
       console.log(err);
     }
   };
@@ -48,6 +59,9 @@ const ReportPage = () => {
       const response = await api.get("/analytics/summary");
       setSummary(response.data.summary || null);
     } catch (err) {
+      if (err.response && err.response.status === 403) {
+        navigate('/forbidden');
+       }
       console.log(err);
     }
   };
@@ -65,6 +79,10 @@ const ReportPage = () => {
         });
       }
     } catch (err) {
+
+      if (err.response && err.response.status === 403) {
+        navigate('/forbidden');
+       }      
       console.log(err);
     }
   };
@@ -85,6 +103,9 @@ const ReportPage = () => {
 
       setAlumni(mappedProfiles.slice(0, 5));
     } catch (err) {
+        if (err.response && err.response.status === 403) {
+        navigate('/forbidden');
+       }
       console.log(err);
     }
   };
@@ -215,7 +236,7 @@ const ReportPage = () => {
     }
   }, [loading, accessToken]);
 
-  if (loading) return "Loading...";
+  if (loading) return <div><LoadingSpinner/></div>
 
   return (
     <div ref={reportRef} className="report-page">

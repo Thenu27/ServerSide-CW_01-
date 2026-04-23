@@ -1,6 +1,6 @@
 import {
-  BarChart,
-  Bar,
+  LineChart,
+  Line,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -59,7 +59,7 @@ const ProgrammeChart = ({ data }) => {
 
       <div className="programme-chart-wrapper" ref={chartRef}>
         <ResponsiveContainer width="100%" height={300}>
-          <BarChart
+          <LineChart
             data={degreeName}
             margin={{ top: 10, right: 20, left: 0, bottom: 40 }}
           >
@@ -74,8 +74,14 @@ const ProgrammeChart = ({ data }) => {
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey="value" radius={[8, 8, 0, 0]} />
-          </BarChart>
+            <Line
+              type="monotone"
+              dataKey="value"
+              stroke="#3B82F6"
+              strokeWidth={2}
+              dot={{ r: 4 }}
+            />
+          </LineChart>
         </ResponsiveContainer>
       </div>
     </div>

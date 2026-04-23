@@ -107,7 +107,6 @@ bidRouter.get('/winner',AuthMiddleware.requireAuth,requireScope('read:alumni_of_
  *         description: Unauthorized
  */
 bidRouter.get('/result',AuthMiddleware.requireAuth,bidController.getMyResult);
-
 /**
  * @swagger
  * /bid:

@@ -2,6 +2,8 @@ import { useState, useEffect, useContext, useMemo } from "react";
 import "./ViewAlumniPage.css";
 import api from "../../components/Api/Api";
 import { AuthContext } from "../../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
+import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 
 function getInitials(name) {
   return name.split(" ").map((n) => n[0]).join("").toUpperCase();
@@ -39,6 +41,7 @@ const ViewAlumniPage = () => {
 
   const { loading, accessToken } = useContext(AuthContext);
 
+  const navigate = useNavigate()
   const getProfile = async () => {
     try {
       const response = await api.get("/profile/view-alumni");
@@ -57,6 +60,9 @@ const ViewAlumniPage = () => {
 
       setAlumni(mappedProfiles);
     } catch (err) {
+      if (err.response && err.response.status === 403) {
+        navigate('/forbidden');
+       }
       console.log(err);
     }
   };
@@ -146,7 +152,7 @@ const ViewAlumniPage = () => {
     window.print();
   };
 
-  if (loading) return "Loading...";
+  if (loading) return <div><LoadingSpinner/></div>
 
   return (
     <div className="alumni-page">
