@@ -1,11 +1,14 @@
 const { prisma } = require("../config/prisma");
 const { AnalyticsService } = require("./analyticsService");
 
+// Service for generating insights
 class InsightsService {
   constructor() {
+    // Initialize analytics service
     this.analyticsService = new AnalyticsService();
   }
 
+  // Get most common certification
   getTopCertification = async () => {
     const topCertification = await prisma.certification.groupBy({
       by: ["name"],
@@ -21,6 +24,7 @@ class InsightsService {
       : null;
   };
 
+  // Get most common employer
   getTopEmployer = async () => {
     const topEmployer = await prisma.employmentHistory.groupBy({
       by: ["companyName"],
@@ -36,6 +40,7 @@ class InsightsService {
       : null;
   };
 
+  // Get most common industry
   getTopIndustry = async () => {
     const topIndustry = await prisma.employmentHistory.groupBy({
       by: ["industrySector"],
@@ -51,6 +56,7 @@ class InsightsService {
       : null;
   };
 
+  // Get top emerging skill (from analytics)
   getTopSkill = async () => {
     const skillData = await this.analyticsService.getSkillGaps();
 
@@ -59,7 +65,10 @@ class InsightsService {
       : null;
   };
 
+  // Get all insights together
   getAllInsights = async () => {
+
+    // Run all queries in parallel
     const [
       mostCommonCertification,
       mostCommonEmployer,

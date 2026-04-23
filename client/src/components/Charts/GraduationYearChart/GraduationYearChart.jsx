@@ -21,7 +21,7 @@ const GraduationYearChart = ({ data }) => {
     try {
       const response = await api.get("/analytics/degree-year");
       if (response) {
-        console.log(response.data.degreeYear);
+        // console.log(response.data.degreeYear);
         setDegreeYears(response.data.degreeYear || []);
       }
     } catch (err) {

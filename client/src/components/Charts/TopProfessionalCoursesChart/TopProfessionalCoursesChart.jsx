@@ -22,7 +22,7 @@ const TopProfessionalCoursesChart = ({ data }) => {
       const response = await api.get("/analytics/courses");
 
       if (response) {
-        console.log(response.data.topCourses);
+        // console.log(response.data.topCourses);
         setTopCourses(response.data.topCourses || []);
       }
     } catch (err) {

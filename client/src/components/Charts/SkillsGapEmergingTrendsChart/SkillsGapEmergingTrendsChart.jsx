@@ -21,7 +21,7 @@ const SkillsGapEmergingTrendsChart = ({ data }) => {
     try {
       const response = await api.get("/analytics/skill-gaps");
       if (response) {
-        console.log("skillgaps:", response.data.skillGaps);
+        // console.log("skillgaps:", response.data.skillGaps);
         setSkillGaps(response.data.skillGaps || []);
       }
     } catch (err) {

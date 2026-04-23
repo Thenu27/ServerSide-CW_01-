@@ -42,9 +42,9 @@ const AlumniPreviewSection = ({ data }) => {
 
   const previewData = data && data.length > 0 ? data.slice(0, 5) : dummyData;
 
-  const handleViewAlumni = () => {
-    console.log("Navigate")
-  };
+  // const handleViewAlumni = () => {
+  //   console.log("Navigate")
+  // };
 
   return (
     <div className="alumni-preview-card">

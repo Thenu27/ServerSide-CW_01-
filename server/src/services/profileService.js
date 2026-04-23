@@ -1,51 +1,58 @@
 const { prisma } = require("../config/prisma");
 const { UsageService } = require("./usageService");
 
-class ProfileService{
+// Service for profile-related logic
+class ProfileService {
 
-    constructor(){
+    constructor() {
+        // Initialize usage logging service
         this.usageService = new UsageService();
     }
 
-    createProfile = async(userId, fullName, bio, linkedIn, imageUrl) =>{
+    // Create new profile
+    createProfile = async (userId, fullName, bio, linkedIn, imageUrl) => {
+
+        // Check if profile already exists
         const existingProfile = await prisma.profile.findUnique({
-            where : {userId :userId}
+            where: { userId: userId }
         })
 
-
-        if(existingProfile){
+        if (existingProfile) {
             const error = new Error('Profile Already Exist!');
             error.statusCode = 409;
             throw error
         }
 
+        // Create profile
         const profile = await prisma.profile.create({
-            data:{
+            data: {
                 userId,
                 fullName,
                 bio: bio || null,
-                linkedIn : linkedIn|| null,
-                imageUrl : imageUrl|| null
+                linkedIn: linkedIn || null,
+                imageUrl: imageUrl || null
             }
         })
 
-        if(userId){
+        // Log usage
+        if (userId) {
             await this.usageService.usage({
-                userId : userId,
-                action:"CREATE_PROFILE",
-                endpoint : "/profile",
-                method : "POST"
+                userId,
+                action: "CREATE_PROFILE",
+                endpoint: "/profile",
+                method: "POST"
             })
-        }         
+        }
 
         return profile
     }
 
+    // Get profile with related data
+    getProfile = async (userId) => {
 
-    getProfile = async(userId)=>{
         const profile = await prisma.profile.findUnique({
-            where:{userId},
-            include:{
+            where: { userId },
+            include: {
                 degrees: true,
                 employmentHistory: true,
                 certifications: true,
@@ -54,59 +61,67 @@ class ProfileService{
             }
         })
 
-        if(!profile){
+        if (!profile) {
             const error = new Error('Profile Not Found!');
-            error.statusCode = 404; // Not Found
+            error.statusCode = 404;
             throw error
         }
 
-        if(userId){
+        // Log usage
+        if (userId) {
             await this.usageService.usage({
-                userId : userId,
-                action:"GET_PROFILE",
-                endpoint : "/profile",
-                method : "GET"
+                userId,
+                action: "GET_PROFILE",
+                endpoint: "/profile",
+                method: "GET"
             })
-        }          
+        }
 
         return profile
     }
 
-    updateProfile = async(userId, fullName, bio, linkedIn, imageUrl)=>{
+    // Update profile
+    updateProfile = async (userId, fullName, bio, linkedIn, imageUrl) => {
+
+        // Check if profile exists
         const existingProfile = await prisma.profile.findUnique({
-            where:{userId}
+            where: { userId }
         })
 
-        if(!existingProfile){
+        if (!existingProfile) {
             const error = new Error('Profile doesnt exist!');
             error.statusCode = 404;
             throw error
         }
 
+        // Update profile
         const updatedProfile = await prisma.profile.update({
-            where:{userId},
-            data:{
+            where: { userId },
+            data: {
                 fullName,
-                 bio,
-                 linkedIn,
-                 imageUrl
+                bio,
+                linkedIn,
+                imageUrl
             }
         })
 
-        if(userId){
+        // Log usage
+        if (userId) {
             await this.usageService.usage({
-                userId : userId,
-                action:"UPDATE_PROFILE",
-                endpoint : "/profile",
-                method : "PUT"
+                userId,
+                action: "UPDATE_PROFILE",
+                endpoint: "/profile",
+                method: "PUT"
             })
         }
 
         return updatedProfile
-
     }
 
+    // Delete profile
     deleteProfile = async (userId) => {
+
+        // Check if profile exists
         const existingProfile = await prisma.profile.findUnique({
             where: { userId }
         });
@@ -117,13 +132,15 @@ class ProfileService{
             throw error;
         }
 
+        // Delete profile
         await prisma.profile.delete({
             where: { userId }
         });
 
+        // Log usage
         if (userId) {
             await this.usageService.usage({
-                userId: userId,
+                userId,
                 action: "DELETE_PROFILE",
                 endpoint: "/profile",
                 method: "DELETE"
@@ -133,12 +150,13 @@ class ProfileService{
         return { message: "Profile deleted successfully" };
     };
 
+    // Get all profiles
+    getAllProfiles = async () => {
 
-    getAllProfiles = async()=>{
         const profiles = await prisma.profile.findMany({
-            include:{
-                degrees:true,
-                employmentHistory:true
+            include: {
+                degrees: true,
+                employmentHistory: true
             }
         });
 
@@ -148,13 +166,11 @@ class ProfileService{
             throw error;
         }
 
-        return{
+        return {
             profiles
         }
-
     }
-
 
 }
 
-module.exports={ProfileService}
+module.exports = { ProfileService }

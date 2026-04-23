@@ -1,16 +1,20 @@
 const express = require("express");
 const { CertificationService } = require("../services/certificationService")
 
-class CertificationController{
-    constructor(){
+// Controller for certification-related operations
+class CertificationController {
+    constructor() {
+        // Initialize service
         this.certificationService = new CertificationService()
     }
 
+    // Add new certification
     addCertification = async (req, res, next) => {
         try {
-            const { name, issuer, year, url} = req.body;
-            const userId = req.user.userId;
+            const { name, issuer, year, url } = req.body; // Input data
+            const userId = req.user.userId; // Logged-in user
 
+            // Validate required fields
             if (!name || !issuer || !year || !url) {
                 return res.status(400).json({
                     status: "error",
@@ -18,6 +22,7 @@ class CertificationController{
                 });
             }
 
+            // Call service to add certification
             const certification = await this.certificationService.addCertification(
                 userId,
                 name,
@@ -37,28 +42,29 @@ class CertificationController{
         }
     };
 
-    getCertification = async(req,res,next)=>{
-        try{
+    // Get certifications for logged-in user
+    getCertification = async (req, res, next) => {
+        try {
             const userId = req.user.userId;
 
             const certification = await this.certificationService.getCertification(userId);
 
             res.status(200).json({
-                status:"success",
+                status: "success",
                 message: "Certifications retrieved successfully",
                 certification
-            })
+            });
 
-
-        }catch(err){
+        } catch (err) {
             next(err)
         }
     }
 
+    // Delete certification
     deleteCertification = async (req, res, next) => {
         try {
             const userId = req.user.userId;
-            const { id } = req.params;
+            const { id } = req.params; // Certification ID
 
             const result = await this.certificationService.deleteCertification(userId, id);
 
@@ -71,14 +77,14 @@ class CertificationController{
         }
     };
 
-
+    // Update certification
     updateCertification = async (req, res, next) => {
         try {
             const userId = req.user.userId;
-            const { id } = req.params;
-            const { name, issuer, year,  url } = req.body;
+            const { id } = req.params; // Certification ID
+            const { name, issuer, year, url } = req.body;
 
-       
+            // Check ID
             if (!id) {
                 return res.status(400).json({
                     status: "error",
@@ -86,6 +92,7 @@ class CertificationController{
                 });
             }
 
+            // Validate fields
             if (!name || !issuer || !year || !url) {
                 return res.status(400).json({
                     status: "error",
@@ -93,6 +100,7 @@ class CertificationController{
                 });
             }
 
+            // Update certification
             const certification = await this.certificationService.updateCertification(
                 userId,
                 id,
@@ -102,7 +110,7 @@ class CertificationController{
                 url
             );
 
-         
+            // Check if exists
             if (!certification) {
                 return res.status(404).json({
                     status: "error",
@@ -121,21 +129,21 @@ class CertificationController{
         }
     };
 
-
-    getAllCertifcations = async(req,res,next)=>{
-        try{
+    // Get all certifications 
+    getAllCertifcations = async (req, res, next) => {
+        try {
             const result = await this.certificationService.getAllCertifications();
+
             res.status(200).json({
                 status: "success",
                 message: "Retreived All Certification successfully",
                 allCert: result.allCert
             });
-        }catch(err){
+        } catch (err) {
             console.log(err)
         }
     }
 
-
 }
 
-module.exports={CertificationController}
+module.exports = { CertificationController }

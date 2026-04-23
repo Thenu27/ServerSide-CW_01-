@@ -1,24 +1,27 @@
 const { ProfileService } = require("../services/profileService")
 
-class ProfileController{
-    constructor(){
+// Controller for profile-related operations
+class ProfileController {
+    constructor() {
+        // Initialize service
         this.profileService = new ProfileService()
     }
 
-    createProfile = async(req,res,next)=>{
-        try{
-            const {fullName, bio, linkedIn, imageUrl} = req.body    
+    // Create new profile
+    createProfile = async (req, res, next) => {
+        try {
+            const { fullName, bio, linkedIn, imageUrl } = req.body // Input data
 
-            console.log("profile create")
-
+            // Validate required field
             if (!fullName) {
                 const error = new Error("Full name is required");
                 error.statusCode = 400;
                 throw error;
             }
 
-            const userId = req.user.userId;
+            const userId = req.user.userId // Logged-in user
 
+            // Call service to create profile
             const profile = await this.profileService.createProfile(
                 userId,
                 fullName,
@@ -32,47 +35,54 @@ class ProfileController{
                 message: "Profile created successfully",
                 profile,
             })
-        }catch(err){
+        } catch (err) {
             next(err)
         }
     }
 
-    getProfile = async(req,res,next)=>{
-        try{
+    // Get profile for logged-in user
+    getProfile = async (req, res, next) => {
+        try {
             const userId = req.user.userId;
+
             const profile = await this.profileService.getProfile(userId);
-            
+
             return res.status(200).json({
-                status:"success",
+                status: "success",
                 profile
             })
 
-        }catch(err){
+        } catch (err) {
             next(err)
         }
-
     }
 
-    updateProfile = async(req,res,next)=>{
-        try{
-            const {fullName, bio, linkedIn, imageUrl} = req.body
-            const userId = req.user.userId
+    // Update profile
+    updateProfile = async (req, res, next) => {
+        try {
+            const { fullName, bio, linkedIn, imageUrl } = req.body;
+            const userId = req.user.userId;
 
+            // Call service to update profile
             const updatedProfile = await this.profileService.updateProfile(
-               userId,fullName,bio,linkedIn,imageUrl
+                userId,
+                fullName,
+                bio,
+                linkedIn,
+                imageUrl
             )
 
             res.status(200).json({
-                status:'success',
+                status: 'success',
                 message: "Profile updated successfully",
                 profile: updatedProfile,
             })
-        }catch(err){
+        } catch (err) {
             next(err)
         }
-
     }
 
+    // Delete profile
     deleteProfile = async (req, res, next) => {
         try {
             const userId = req.user.userId;
@@ -88,22 +98,21 @@ class ProfileController{
         }
     };
 
-
-    getAllProfiles = async(req,res,next)=>{
-        try{
+    // Get all profiles (admin/global)
+    getAllProfiles = async (req, res, next) => {
+        try {
             const profiles = await this.profileService.getAllProfiles();
-            
+
             return res.status(200).json({
-                status: "success",                
+                status: "success",
                 profiles
             });
-            
-        }catch(err){
+
+        } catch (err) {
             next(err)
         }
     }
 
-
 }
 
-module.exports={ProfileController}
+module.exports = { ProfileController }

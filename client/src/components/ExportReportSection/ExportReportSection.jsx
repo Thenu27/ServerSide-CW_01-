@@ -2,15 +2,15 @@ import "./ExportReportSection.css";
 
 const ExportReportSection = () => {
   const handleExportCSV = () => {
-    console.log("Export CSV clicked");
+    // console.log("Export CSV clicked");
   };
 
   const handleExportPDF = () => {
-    console.log("Export PDF clicked");
+    // console.log("Export PDF clicked");
   };
 
   const handleDownloadReport = () => {
-    console.log("Download Report clicked");
+    // console.log("Download Report clicked");
   };
 
   return (

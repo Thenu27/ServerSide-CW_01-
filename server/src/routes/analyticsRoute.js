@@ -1,5 +1,6 @@
 const { AnalyticsController } = require('../controllers/analyticsController');
 const { ApiKeyMiddleware,requireScope } = require('../middleware/apiKeyMiddleware');
+const { AuthMiddleware } = require('../middleware/authMiddleware');
 
 const analyticsRoute = require('express').Router();
 
@@ -48,7 +49,7 @@ analyticsRoute.use(requireScope("read:analytics"));
  *       403:
  *         description: Invalid API key or insufficient permissions
  */
-analyticsRoute.get('/summary',analyticsController.getSummary)
+analyticsRoute.get('/summary',AuthMiddleware.requireAuth,analyticsController.getSummary)
 
 /**
  * @swagger
@@ -86,7 +87,7 @@ analyticsRoute.get('/summary',analyticsController.getSummary)
  *       403:
  *         description: Invalid API key or insufficient permissions
  */
-analyticsRoute.get('/industry',analyticsController.getIndustryCount)
+analyticsRoute.get('/industry',AuthMiddleware.requireAuth,analyticsController.getIndustryCount)
 
 /**
  * @swagger
@@ -124,7 +125,7 @@ analyticsRoute.get('/industry',analyticsController.getIndustryCount)
  *       403:
  *         description: Invalid API key or insufficient permissions
  */
-analyticsRoute.get('/certification',analyticsController.getTopCertification)
+analyticsRoute.get('/certification',AuthMiddleware.requireAuth,analyticsController.getTopCertification)
 
 /**
  * @swagger
@@ -162,7 +163,7 @@ analyticsRoute.get('/certification',analyticsController.getTopCertification)
  *       403:
  *         description: Invalid API key or insufficient permissions
  */
-analyticsRoute.get('/employer',analyticsController.getTopEmployers)
+analyticsRoute.get('/employer',AuthMiddleware.requireAuth,analyticsController.getTopEmployers)
 
 /**
  * @swagger
@@ -200,7 +201,7 @@ analyticsRoute.get('/employer',analyticsController.getTopEmployers)
  *       403:
  *         description: Invalid API key or insufficient permissions
  */
-analyticsRoute.get('/courses',analyticsController.getTopCourses)
+analyticsRoute.get('/courses',AuthMiddleware.requireAuth,analyticsController.getTopCourses)
 
 /**
  * @swagger
@@ -238,7 +239,7 @@ analyticsRoute.get('/courses',analyticsController.getTopCourses)
  *       403:
  *         description: Invalid API key or insufficient permissions
  */
-analyticsRoute.get('/degree-year',analyticsController.getDegreeYear)
+analyticsRoute.get('/degree-year',AuthMiddleware.requireAuth,analyticsController.getDegreeYear)
 
 /**
  * @swagger
@@ -276,7 +277,7 @@ analyticsRoute.get('/degree-year',analyticsController.getDegreeYear)
  *       403:
  *         description: Invalid API key or insufficient permissions
  */
-analyticsRoute.get('/degreeName',analyticsController.getDegreeName)
+analyticsRoute.get('/degreeName',AuthMiddleware.requireAuth,analyticsController.getDegreeName)
 
 /**
  * @swagger
@@ -314,7 +315,7 @@ analyticsRoute.get('/degreeName',analyticsController.getDegreeName)
  *       403:
  *         description: Invalid API key or insufficient permissions
  */
-analyticsRoute.get('/job-title',analyticsController.getJobTitle);
+analyticsRoute.get('/job-title',AuthMiddleware.requireAuth,analyticsController.getJobTitle);
 
 /**
  * @swagger
@@ -352,6 +353,6 @@ analyticsRoute.get('/job-title',analyticsController.getJobTitle);
  *       403:
  *         description: Invalid API key or insufficient permissions
  */
-analyticsRoute.get("/skill-gaps", analyticsController.getSkillGaps);
+analyticsRoute.get("/skill-gaps",AuthMiddleware.requireAuth,analyticsController.getSkillGaps);
 
 module.exports={analyticsRoute}

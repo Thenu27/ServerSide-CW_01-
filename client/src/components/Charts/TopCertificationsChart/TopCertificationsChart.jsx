@@ -22,7 +22,7 @@ const TopCertificationsChart = ({ data }) => {
       const response = await api.get("/analytics/certification");
 
       if (response) {
-        console.log(response.data.topCertification);
+        // console.log(response.data.topCertification);
         setTopCertifications(response.data.topCertification || []);
       }
     } catch (err) {

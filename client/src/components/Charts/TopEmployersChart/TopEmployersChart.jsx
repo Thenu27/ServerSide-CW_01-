@@ -26,7 +26,7 @@ const TopEmployersChart = ({ data }) => {
       const response = await api.get("/analytics/employer"); 
 
       if (response) {
-        console.log(response.data.topEmployers);
+        // console.log(response.data.topEmployers);
         setTopEmployers(response.data.topEmployers || []);
       }
     } catch (err) {

@@ -20,7 +20,7 @@ const CareerRoleDistributionChart = ({ data }) => {
       const response = await api.get("/analytics/job-title");
 
       if (response) {
-        console.log(response.data.jobTitle);
+        // console.log(response.data.jobTitle);
         setCareerNames(response.data.jobTitle || []);
       }
     } catch (err) {

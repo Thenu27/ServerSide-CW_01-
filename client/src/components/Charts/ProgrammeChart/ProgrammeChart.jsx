@@ -21,7 +21,7 @@ const ProgrammeChart = ({ data }) => {
     try {
       const response = await api.get("/analytics/degreeName");
       if (response) {
-        console.log(response.data.degreeName);
+        // console.log(response.data.degreeName);
         setDegreeName(response.data.degreeName || []);
       }
     } catch (err) {

@@ -1,8 +1,10 @@
-const {sendEmail} = require('../utils/sendMail')
+const { sendEmail } = require('../utils/sendMail')
 
+// Service for sending notifications via email
 class NotificationService {
 
-        sendEmailVerification = async ({ to, link }) => {
+    // Send email verification link
+    sendEmailVerification = async ({ to, link }) => {
         await sendEmail({
             to,
             subject: "Verify your email",
@@ -21,9 +23,10 @@ class NotificationService {
                 </a>
                 <p>If you did not register, ignore this email.</p>
             `
-            });
-        };
+        });
+    };
 
+    // Send email to winner
     sendWinnerEmail = async ({ to, date }) => {
         await sendEmail({
             to,
@@ -38,6 +41,7 @@ class NotificationService {
         return true;
     };
 
+    // Send email to losers
     sendLoserEmail = async ({ to, date }) => {
         await sendEmail({
             to,
@@ -51,6 +55,7 @@ class NotificationService {
         return true;
     };
 
+    // Send email when bid is cancelled
     sendCancelEmail = async ({ to, date }) => {
 
         await sendEmail({
@@ -64,6 +69,7 @@ class NotificationService {
         return true;
     };
 
+    // Send email when bid is placed
     sendBidPlacedEmail = async ({ to, date, amount }) => {
 
         await sendEmail({

@@ -20,7 +20,7 @@ const IndustrySectorChart = ({ data }) => {
       const response = await api.get("/analytics/industry");
 
       if (response) {
-        console.log(response.data.industryCount);
+        // console.log(response.data.industryCount);
         setIndustryData(response.data.industryCount || []);
       }
     } catch (err) {

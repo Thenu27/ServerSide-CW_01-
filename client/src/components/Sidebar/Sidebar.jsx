@@ -16,7 +16,7 @@ const Sidebar = () => {
     try {
      const response = await api.post("/auth/logout"); 
      if(response){
-      console.log(response.data);
+      // console.log(response.data);
      }
     } catch (err) {
       console.log(err);

@@ -1,17 +1,20 @@
 const { LiscenceService } = require("../services/liscenceService");
 
-class LiscenceController{
+// Controller for licence-related operations
+class LiscenceController {
 
-    constructor(){
+    constructor() {
+        // Initialize service
         this.liscenceService = new LiscenceService()
     }
 
-    addLiscence = async(req,res,next)=>{
+    // Add new licence
+    addLiscence = async (req, res, next) => {
+        try {
+            const { name, issuer, year, url } = req.body; // Input data
+            const userId = req.user.userId; // Logged-in user
 
-        try{
-            const {name,issuer,year,url} = req.body;
-            const userId = req.user.userId;
-
+            // Validate required fields
             if (!name || !issuer || !year || !url) {
                 return res.status(400).json({
                     status: "error",
@@ -19,42 +22,48 @@ class LiscenceController{
                 });
             }
 
+            // Call service to add licence
             const liscence = await this.liscenceService.addLiscence(
-                userId,name,issuer,year,url
-            )
+                userId,
+                name,
+                issuer,
+                year,
+                url
+            );
 
             res.status(201).json({
-                status:"success",
+                status: "success",
                 message: "Licence added successfully",
                 liscence
-            })
-        }catch(err){
-            next(err)
+            });
+        } catch (err) {
+            next(err);
         }
-
     }
 
-    getLiscence = async(req,res,next)=>{
-        try{
+    // Get licences for logged-in user
+    getLiscence = async (req, res, next) => {
+        try {
             const userId = req.user.userId;
 
             const liscence = await this.liscenceService.getLiscence(userId);
 
             res.status(200).json({
-                status:"success",
+                status: "success",
                 message: "Licences retrieved successfully",
                 liscence
-            })
+            });
 
-        }catch(err){
-            next(err)
+        } catch (err) {
+            next(err);
         }
     }
 
+    // Delete licence
     deleteLiscence = async (req, res, next) => {
         try {
             const userId = req.user.userId;
-            const { id } = req.params;
+            const { id } = req.params; // Licence ID
 
             const result = await this.liscenceService.deleteLiscence(userId, id);
 
@@ -67,12 +76,14 @@ class LiscenceController{
         }
     };
 
+    // Update licence
     updateLiscence = async (req, res, next) => {
         try {
             const userId = req.user.userId;
-            const { id } = req.params;
+            const { id } = req.params; // Licence ID
             const { name, issuer, year, url } = req.body;
 
+            // Validate required fields
             if (!name || !issuer || !year || !url) {
                 return res.status(400).json({
                     status: "error",
@@ -80,6 +91,7 @@ class LiscenceController{
                 });
             }
 
+            // Update licence
             const liscence = await this.liscenceService.updateLiscence(
                 userId,
                 id,
@@ -99,7 +111,6 @@ class LiscenceController{
         }
     };
 
-
 }
 
-module.exports={LiscenceController}
+module.exports = { LiscenceController }
